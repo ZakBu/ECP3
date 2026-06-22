@@ -1,0 +1,27 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap");
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Roboto", "Segoe UI", sans-serif;
+  background: #FAF9FD;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* react-grid-layout: контент ячейки заполняет высоту; маркеры ресайза — не дети с height:100% */
+.react-grid-layout .react-grid-item > *:not(.react-resizable-handle) {
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+/* Обрезка теней/антиалиасинга карточек по габаритам ячейки сетки */
+.react-grid-layout .react-grid-item {
+  overflow: hidden;
+}

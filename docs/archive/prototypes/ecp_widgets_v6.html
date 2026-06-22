@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>ЕЦП ГД — Widget Library v6</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@200;300;400;500;700&display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Roboto',sans-serif;background:#ECEEF7;color:#191C22;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#C3C6D9;border-radius:99px}
+.app{display:flex;flex-direction:column;height:100vh;overflow:hidden}
+
+/* ── APP BAR ── */
+.appbar{height:58px;background:linear-gradient(135deg,#0C40B0 0%,#1857C0 55%,#2B6BD8 100%);display:flex;align-items:center;padding:0 22px;gap:14px;flex-shrink:0;box-shadow:0 2px 16px rgba(24,87,192,.38),0 1px 0 rgba(255,255,255,.08) inset;z-index:20}
+.logo-mark{width:38px;height:38px;background:rgba(255,255,255,.15);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(4px)}
+.ab-title{font-size:16px;font-weight:500;color:#fff;letter-spacing:.15px}
+.ab-badge{font-size:9px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;background:rgba(255,255,255,.15);color:rgba(255,255,255,.9);padding:3px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.18)}
+.ab-right{margin-left:auto;font-size:11px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:10px}
+
+/* ── TAB NAV ── */
+.tabnav{background:#E8EAF3;border-bottom:1px solid rgba(195,198,217,.55);overflow-x:auto;white-space:nowrap;flex-shrink:0}
+.tabnav::-webkit-scrollbar{height:0}
+.tabnav-inner{display:inline-flex;padding:0 16px;align-items:stretch;min-width:100%}
+.cat-sep{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#73778C;padding:0 10px;display:flex;align-items:center;opacity:.55}
+.tbtn{height:48px;padding:0 14px;background:transparent;border:none;border-bottom:3px solid transparent;cursor:pointer;font-family:'Roboto',sans-serif;font-size:13px;font-weight:500;color:#43475A;white-space:nowrap;display:flex;align-items:center;gap:6px;position:relative;top:1px;border-radius:8px 8px 0 0;transition:color .15s,background .15s}
+.tbtn:hover{color:#1857C0;background:rgba(24,87,192,.06)}
+.tbtn.on{color:#1857C0;border-bottom-color:#1857C0}
+.tnum{min-width:18px;height:18px;padding:0 5px;border-radius:5px;background:rgba(195,198,217,.45);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;color:#43475A}
+.tbtn.on .tnum{background:#D8E2FF;color:#1857C0}
+
+/* ── SHOWCASE ── */
+.showcase{flex:1;overflow-y:auto;padding:24px 28px 80px}
+.sc-head{margin-bottom:24px}
+.sc-title{font-size:22px;font-weight:300;color:#191C22;margin-bottom:5px;letter-spacing:-.3px}
+.sc-meta{display:flex;align-items:center;gap:8px;font-size:11px;color:#73778C;flex-wrap:wrap}
+.size-sec{margin-bottom:40px}
+.size-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.3px;color:#73778C;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.size-lbl::after{content:'';flex:1;height:1px;background:rgba(195,198,217,.45)}
+.new-pill{font-size:7px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;background:#D8E2FF;color:#1857C0;padding:2px 7px;border-radius:999px;flex-shrink:0}
+.variants{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
+.vwrap{display:flex;flex-direction:column;gap:7px}
+.vlabel{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#73778C;display:flex;align-items:center;gap:6px}
+.fullcol{width:100%}
+
+/* ── WIDGET CARD ── */
+.wcard{background:#fff;border-radius:20px;border:1px solid rgba(195,198,217,.3);box-shadow:0 1px 3px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.06);display:flex;flex-direction:column;overflow:hidden;transition:box-shadow .22s,transform .22s;position:relative}
+.wcard:hover{box-shadow:0 3px 10px rgba(0,0,0,.07),0 12px 32px rgba(0,0,0,.09);transform:translateY(-2px)}
+.wcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;z-index:1;border-radius:20px 20px 0 0}
+.ac-p::before{background:linear-gradient(90deg,#1857C0,#5B9BF0)}
+.ac-r::before{background:linear-gradient(90deg,#BA1A1A,#FF6868)}
+.ac-g::before{background:linear-gradient(90deg,#1B6E36,#4CC97A)}
+.ac-a::before{background:linear-gradient(90deg,#B07400,#F0B800)}
+.ac-tl::before{background:linear-gradient(90deg,#006874,#00C5DB)}
+.ac-pu::before{background:linear-gradient(90deg,#6B3FA0,#AB7DF6)}
+.wh{padding:16px 16px 11px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(195,198,217,.25);background:rgba(250,251,255,.95);flex-shrink:0;padding-top:19px}
+.wh.sm{padding:12px 14px 10px;padding-top:15px}
+.wb{padding:14px 16px;flex:1;overflow:hidden;min-height:0}
+.wb.sm{padding:10px 14px}
+.wf{padding:8px 16px 12px;border-top:1px solid rgba(195,198,217,.25);background:rgba(250,251,255,.95);display:flex;align-items:center;flex-shrink:0}
+.wi{border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.wts{flex:1;min-width:0}
+.wt{font-size:14px;font-weight:500;color:#191C22;letter-spacing:.05px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ws{font-size:11px;color:#73778C;margin-top:1px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mbtn{width:28px;height:28px;border-radius:14px;border:none;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .14s;flex-shrink:0}
+.mbtn:hover{background:rgba(195,198,217,.38)}
+
+/* ── INNER COMPONENTS ── */
+.lrow{border-bottom:1px solid rgba(195,198,217,.22);cursor:pointer;transition:background .1s}
+.lrow:last-child{border-bottom:none}
+.lrow:hover{background:rgba(24,87,192,.03)}
+.itab{border:none;cursor:pointer;padding:5px 12px;border-radius:999px;font-family:'Roboto',sans-serif;font-size:11px;font-weight:500;white-space:nowrap;transition:all .14s}
+.kpi-tile{border-radius:16px;padding:14px;overflow:hidden;cursor:pointer;transition:transform .18s,box-shadow .18s}
+.kpi-tile:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.14)}
+.svc-btn{border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .15s;border:1px solid rgba(195,198,217,.3)}
+.svc-btn:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.fcard{background:#fff;border:1px solid rgba(195,198,217,.3);border-radius:16px;padding:12px 14px;cursor:pointer;transition:all .16s}
+.fcard:hover{box-shadow:0 4px 16px rgba(0,0,0,.1);border-color:rgba(195,198,217,.6)}
+.addbtn{background:transparent;border:1.5px dashed rgba(195,198,217,.7);border-radius:16px;padding:12px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:all .15s}
+.addbtn:hover{background:rgba(24,87,192,.04);border-color:#1857C0}
+.kcol{background:#F4F5FB;border-radius:13px;padding:9px;border:1px solid rgba(195,198,217,.3)}
+.kcard{background:#fff;border:1px solid rgba(195,198,217,.25);border-radius:10px;padding:9px 10px;margin-bottom:6px;cursor:pointer;transition:all .13s}
+.kcard:hover{box-shadow:0 3px 12px rgba(0,0,0,.09);transform:translateY(-1px)}
+.kcard:last-child{margin-bottom:0}
+.cday{text-align:center;cursor:pointer}
+.cdnum{display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:30px;padding:0 8px;border-radius:10px;font-size:14px;font-weight:600;line-height:1;transition:all .12s}
+.cdnum:hover{background:rgba(24,87,192,.08);color:#1857C0}
+
+/* ── CHATBOT ── */
+.cbubble{padding:9px 13px;border-radius:16px;font-size:12px;line-height:1.55;max-width:88%;word-break:break-word;animation:bIn .2s cubic-bezier(.2,0,0,1) both}
+.cbot{background:#EFF1FB;color:#191C22;border-bottom-left-radius:4px}
+.cuser{background:linear-gradient(135deg,#1857C0,#3B7EE8);color:#fff;margin-left:auto;border-bottom-right-radius:4px}
+.cinput{flex:1;border:1px solid rgba(195,198,217,.5);border-radius:20px;padding:8px 14px;font-family:'Roboto',sans-serif;font-size:12px;color:#191C22;background:#fff;outline:none;transition:border-color .14s}
+.cinput:focus{border-color:#1857C0;box-shadow:0 0 0 3px rgba(24,87,192,.08)}
+.csend{width:34px;height:34px;border-radius:17px;background:linear-gradient(135deg,#1857C0,#3B7EE8);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .14s;box-shadow:0 2px 8px rgba(24,87,192,.35)}
+.csend:hover{opacity:.9}
+.cdot{display:inline-block;width:5px;height:5px;border-radius:50%;background:#73778C;animation:dp 1.2s ease infinite}
+
+@keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bIn{from{opacity:0;transform:scale(.95) translateY(5px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes dp{0%,100%{opacity:.3;transform:scale(.7)}50%{opacity:1;transform:scale(1)}}
+.fu{animation:slideUp .28s cubic-bezier(.2,0,0,1) both}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useEffect,useMemo,useState,useRef,useCallback}=React;
+
+/* ── TOKENS ── */
+const C={
+  p:'#1857C0',pC:'#D8E2FF',pCOn:'#001259',pM:'#3B7EE8',
+  r:'#BA1A1A',rC:'#FFDAD6',rCOn:'#410002',rM:'#E53935',
+  a:'#7D5700',aC:'#FFDEA9',aCOn:'#281800',aM:'#E08C00',
+  g:'#1B6E36',gC:'#A2F6B5',gCOn:'#00210D',gM:'#2E9B58',
+  tl:'#006874',tlC:'#9EEFFD',tlCOn:'#001F24',tlM:'#0097B2',
+  pu:'#6B3FA0',puC:'#EBDDFF',puCOn:'#230060',puM:'#8B5CF6',
+  t1:'#191C22',t2:'#43475A',t3:'#73778C',
+  sf:'#FFFFFF',sf2:'#F8F9FE',sf3:'#ECEEF7',ol:'#C3C6D9'
+};
+
+const widths={compact:272,medium:360,standard:448,wide:648,xl:'100%'};
+const fixedH={compact:272,medium:282};
+
+/* ── PRIMITIVES ── */
+const TLink=({children,onClick})=>(
+  <button onClick={onClick} style={{background:'none',border:'none',padding:0,fontSize:12,fontWeight:500,color:C.p,cursor:'pointer',display:'inline-flex',alignItems:'center',gap:3,fontFamily:"'Roboto',sans-serif"}}>
+    {children}<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={C.p} strokeWidth="2.5" strokeLinecap="round"><polyline points="9,18 15,12 9,6"/></svg>
+  </button>
+);
+
+const Chip=({c='p',children,sm})=>(
+  <span style={{fontSize:sm?9:11,fontWeight:600,padding:sm?'2px 8px':'4px 10px',borderRadius:999,background:C[c+'C']||C.pC,color:C[c+'COn']||C.pCOn,display:'inline-block',lineHeight:1.4,letterSpacing:'.1px',whiteSpace:'nowrap'}}>{children}</span>
+);
+
+const Prog=({pct,c='p',h=4})=>(
+  <div style={{height:h,background:C[c+'C']||C.pC,borderRadius:999,overflow:'hidden',flexShrink:0}}>
+    <div style={{height:'100%',width:`${Math.max(0,Math.min(100,pct))}%`,background:C[c+'M']||C.pM,borderRadius:999,transition:'width .5s cubic-bezier(.4,0,.2,1)'}}/>
+  </div>
+);
+
+const Av=({t,bg=C.pM,s=28})=>(
+  <div style={{width:s,height:s,borderRadius:'50%',background:bg,display:'flex',alignItems:'center',justifyContent:'center',fontSize:s<24?8:s<30?10:12,fontWeight:700,color:'#fff',flexShrink:0,letterSpacing:'.3px',boxShadow:`0 2px 8px ${bg}55`}}>{t}</div>
+);
+
+const SChip=({active,children})=>(
+  <span style={{fontSize:10,fontWeight:600,padding:'4px 9px',borderRadius:8,background:active?C.pC:C.sf3,color:active?C.pM:C.t2,border:`1px solid ${active?C.p+'44':C.ol+'44'}`,whiteSpace:'nowrap'}}>{children}</span>
+);
+
+const MetaRow=({scope='Отдел',subject='ОГА',period='7 дней',metric='24 задачи',delta='+8%'})=>{
+  const pos=delta.startsWith('+');
+  return(
+    <div style={{display:'flex',alignItems:'center',gap:6,flexWrap:'wrap',marginBottom:12,padding:'7px 10px',background:C.sf2,borderRadius:10,border:`1px solid ${C.ol}33`}}>
+      <SChip active>{scope}: {subject}</SChip>
+      <SChip>{period}</SChip>
+      <span style={{fontSize:11,fontWeight:600,color:C.t1}}>{metric}</span>
+      <span style={{fontSize:10,fontWeight:700,color:pos?C.gM:C.rM,marginLeft:'auto'}}>{pos?'↑':'↓'} {delta.replace(/^[+-]/,'')}</span>
+    </div>
+  );
+};
+
+const Tabs=({tabs,active,onChange,sm})=>(
+  <div style={{display:'flex',gap:4,flexWrap:'wrap',marginBottom:12}}>
+    {tabs.map(t=>(
+      <button key={t.key} className="itab" onClick={()=>onChange(t.key)}
+        style={{background:active===t.key?C.p:C.sf3,color:active===t.key?'#fff':C.t2,fontSize:sm?9:11,boxShadow:active===t.key?`0 2px 8px ${C.p}40`:undefined}}>
+        {t.label}
+      </button>
+    ))}
+  </div>
+);
+
+/* ── WIDGET SHELL ── */
+const W=({size='standard',title,sub,iconBg,icon,badge,badgeC='p',foot,children,noFoot,acc='p'})=>{
+  const cmp=size==='compact', med=size==='medium', tight=cmp||med;
+  const w=widths[size]||448, fh=fixedH[size];
+  return(
+    <div className={`wcard ac-${acc}`} style={{width:w,fontFamily:"'Roboto',sans-serif",...(fh?{height:fh}:{})}}>
+      <div className={`wh${tight?' sm':''}`}>
+        <div className="wi" style={{width:cmp?30:36,height:cmp?30:36,borderRadius:cmp?9:12,background:iconBg,boxShadow:`0 2px 10px ${iconBg}55`}}>
+          <div style={{transform:cmp?'scale(.82)':undefined}}>{icon}</div>
+        </div>
+        <div className="wts">
+          <div className="wt" style={{fontSize:cmp?13:14}}>{title}</div>
+          {!cmp&&sub&&<div className="ws">{sub}</div>}
+        </div>
+        {!tight&&badge&&<Chip c={badgeC} sm>{badge}</Chip>}
+        <button className="mbtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill={C.t3}><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg>
+        </button>
+      </div>
+      <div className={`wb${tight?' sm':''}`} style={{flex:1,overflow:'hidden',minHeight:0}}>{children}</div>
+      {!noFoot&&<div className="wf">{foot||<TLink>Подробнее</TLink>}</div>}
+    </div>
+  );
+};
+
+/* ── CHART PRIMITIVES ── */
+const BarSVG=({vals,colors,labels,h=70,w=220,accent})=>{
+  const mx=Math.max(...vals,1),n=vals.length,bw=Math.max(8,(w-32)/n-5);
+  return(
+    <svg width="100%" height={h+(labels?20:0)} viewBox={`0 0 ${w} ${h+(labels?20:0)}`} preserveAspectRatio="xMidYMid meet">
+      {[.25,.5,.75].map((f,i)=><line key={i} x1={8} y1={(h-8)*f} x2={w-8} y2={(h-8)*f} stroke={C.ol+'30'} strokeWidth={.7} strokeDasharray="3,5"/>)}
+      {vals.map((v,i)=>{
+        const bh=Math.max(4,(v/mx)*(h-14)),x=16+i*(w-32)/n+(w-32)/n/2-bw/2,y=h-bh-6;
+        const col=Array.isArray(colors)?colors[i%colors.length]:colors;
+        const hi=accent===i;
+        return(
+          <g key={i}>
+            <rect x={x} y={y} width={bw} height={bh} rx={5} fill={col} opacity={hi?1:.75}/>
+            {hi&&<rect x={x} y={y} width={bw} height={4} rx={2} fill={col} opacity={.25}/>}
+            {labels&&<text x={x+bw/2} y={h+15} textAnchor="middle" fontSize="8" fill={C.t3} fontFamily="Roboto,sans-serif" fontWeight="500">{labels[i]}</text>}
+          </g>
+        );
+      })}
+    </svg>
+  );
+};
+
+const LineSVG=({datasets,h=65,w=220,fill=false})=>{
+  const pathStr=pts=>{const mn=Math.min(...pts),mx=Math.max(...pts),rng=mx-mn||1;return pts.map((v,i)=>`${i?'L':'M'}${10+i*(w-20)/(pts.length-1)},${8+(1-(v-mn)/rng)*(h-16)}`).join(' ');};
+  const fillPath=pts=>{const p=pathStr(pts),last=10+(pts.length-1)*(w-20)/(pts.length-1);return p+`L${last},${h-4} L10,${h-4} Z`;};
+  const pts2=pts=>{const mn=Math.min(...pts),mx=Math.max(...pts),rng=mx-mn||1;return pts.map((v,i)=>({cx:10+i*(w-20)/(pts.length-1),cy:8+(1-(v-mn)/rng)*(h-16)}));};
+  return(
+    <svg width="100%" height={h} viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none">
+      <defs>{datasets.map((ds,i)=><linearGradient key={i} id={`lg${i}`} x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={ds.c} stopOpacity=".22"/><stop offset="100%" stopColor={ds.c} stopOpacity="0"/></linearGradient>)}</defs>
+      {[.3,.6].map((f,i)=><line key={i} x1={8} y1={h*f} x2={w-8} y2={h*f} stroke={C.ol+'28'} strokeWidth={.7} strokeDasharray="3,5"/>)}
+      {datasets.map((ds,i)=>(
+        <g key={i}>
+          {fill&&<path d={fillPath(ds.pts)} fill={`url(#lg${i})`}/>}
+          <path d={pathStr(ds.pts)} fill="none" stroke={ds.c} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+          {pts2(ds.pts).map((pt,pi)=>(pi===0||pi===ds.pts.length-1)?<circle key={pi} cx={pt.cx} cy={pt.cy} r={3.5} fill={ds.c} stroke="#fff" strokeWidth={1.5}/>:null)}
+        </g>
+      ))}
+    </svg>
+  );
+};
+
+const DonutSVG=({segs,sz=72,label,sub})=>{
+  const r=sz*.37,cx=sz/2,cy=sz/2,circ=2*Math.PI*r,total=segs.reduce((s,x)=>s+x.v,0)||1;
+  let off=-circ/4;
+  const lbl=label||(segs[0]?Math.round(segs[0].v/total*100)+'%':'');
+  return(
+    <svg width={sz} height={sz} viewBox={`0 0 ${sz} ${sz}`}>
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke={C.ol+'40'} strokeWidth={sz*.12}/>
+      {segs.map((s,i)=>{const dash=circ*s.v/total;const el=<circle key={i} cx={cx} cy={cy} r={r} fill="none" stroke={s.c} strokeWidth={sz*.12} strokeDasharray={`${dash} ${circ}`} strokeDashoffset={off} strokeLinecap="butt"/>;off-=dash;return el;})}
+      <text x={cx} y={cy+(sub?-4:0)} textAnchor="middle" fontSize={sz*.2} fontWeight="600" fill={C.t1} dominantBaseline="middle" fontFamily="Roboto,sans-serif">{lbl}</text>
+      {sub&&<text x={cx} y={cy+sz*.13} textAnchor="middle" fontSize={sz*.11} fill={C.t3} fontFamily="Roboto,sans-serif">{sub}</text>}
+    </svg>
+  );
+};
+
+/* ── ICONS ── */
+const IcoBars=({c=C.p})=><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round"><rect x="2" y="13" width="5" height="8" rx="1.5"/><rect x="9.5" y="8" width="5" height="13" rx="1.5"/><rect x="17" y="3" width="5" height="18" rx="1.5"/><polyline points="2,13 8,7 14,10 20,4" strokeDasharray="2,2" stroke={C.pM} strokeWidth="1.4"/></svg>;
+const IcoLine=({c=C.p})=><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round"><polyline points="22,7 13,7 13,22"/><polyline points="3,22 22,22"/><path d="M3 17l4-5 4 3 5-7" stroke={C.pM} strokeWidth="2"/></svg>;
+const IcoWarn=({c=C.rM})=><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round"><polygon points="12,2 22,20 2,20" rx="2"/><line x1="12" y1="9" x2="12" y2="14"/><circle cx="12" cy="17.5" r=".5" fill={c} strokeWidth="2"/></svg>;
+const IcoFilter=({c=C.p})=><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round"><path d="M4 4h16l-6 8v7l-4-2V12L4 4z"/></svg>;
+const IcoStar=({c=C.gM})=><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round"><path d="M12 2l2.9 5.9L22 9.3l-5 4.9 1.2 6.8L12 17.8l-6.2 3.2L7 14.2 2 9.3l7.1-1.4z"/></svg>;
+const IcoCheck=({c=C.gM})=><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 01-2 2H6a2 2 0 01-2-2V5a2 2 0 012-2h9"/></svg>;
+const IcoBolt=({c=C.aM})=><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round"><polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/></svg>;
+const IcoHeart=({c=C.aM})=><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 00-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 000-7.6z"/></svg>;
+const IcoFile=({c=C.p})=><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>;
+const IcoDesktop=({c=C.gM})=><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>;
+const IcoUsers=({c=C.puM})=><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>;
+const IcoCal=({c=C.p})=><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="2.5"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>;
+const IcoNews=({c=C.aM})=><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2"/><line x1="18" y1="14" x2="10" y2="14"/><line x1="15" y1="18" x2="10" y2="18"/><rect x="10" y="6" width="8" height="4" rx="1"/></svg>;
+const IcoBook=({c=C.p})=><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><line x1="9" y1="7" x2="16" y2="7"/><line x1="9" y1="11" x2="14" y2="11"/></svg>;
+const IcoPeople=({c=C.gM})=><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>;
+const IcoBot=({c=C.tlM})=><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round"><rect x="3" y="8" width="18" height="13" rx="3"/><path d="M8 8V6a4 4 0 018 0v2"/><circle cx="9" cy="14" r="1.5" fill={c} strokeWidth="0"/><circle cx="15" cy="14" r="1.5" fill={c} strokeWidth="0"/><path d="M9 18h6"/></svg>;
+const IcoSend=()=><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg>;
+const IcoSearch=()=><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={C.t3} strokeWidth="2.2" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>;
+const IcoPlus=({c=C.p,s=16})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>;
+
+/* ──────────────────────────────────────────────────────
+   W01 · KPI COUNTERS
+────────────────────────────────────────────────────── */
+const kpiData=[
+  {l:'Новые',v:4,c:'p',p:20,d:'+2 сегодня'},
+  {l:'В работе',v:12,c:'g',p:60,d:'без изм.'},
+  {l:'Просрочено',v:3,c:'r',p:15,d:'+1 сегодня'},
+  {l:'На согласовании',v:0,c:'a',p:0,d:'—'}
+];
+
+const KTile=({it,big})=>(
+  <div className="kpi-tile" style={{background:`linear-gradient(140deg,${C[it.c+'C']}88,${C[it.c+'C']}44)`,border:`1px solid ${C[it.c+'C']}bb`}}>
+    <div style={{fontSize:9,fontWeight:700,textTransform:'uppercase',letterSpacing:'.9px',color:C[it.c+'COn'],marginBottom:5,opacity:.75}}>{it.l}</div>
+    <div style={{fontSize:big?48:34,fontWeight:200,color:C[it.c+'M'],lineHeight:1,letterSpacing:'-2px',marginBottom:10}}>{it.v}</div>
+    <Prog pct={it.p} c={it.c} h={3}/>
+    <div style={{fontSize:9,color:C[it.c+'COn'],fontWeight:600,marginTop:5,opacity:.8}}>{it.d}</div>
+  </div>
+);
+
+const W01=({size='standard'})=>{
+  const xl=size==='xl', wide=size==='wide', std=size==='standard', med=size==='medium', cmp=size==='compact';
+  if(cmp) return(
+    <W size={size} title="KPI" iconBg={C.pC} icon={<IcoBars/>} noFoot acc="p">
+      <div style={{display:'flex',flexDirection:'column',height:'100%',justifyContent:'space-between'}}>
+        <div style={{fontSize:9,fontWeight:600,textTransform:'uppercase',letterSpacing:'.8px',color:C.t3}}>ОГА · Сегодня</div>
+        <div style={{textAlign:'center',padding:'4px 0'}}>
+          <div style={{fontSize:52,fontWeight:200,color:C.pM,lineHeight:1,letterSpacing:'-3px'}}>{kpiData[0].v}</div>
+          <div style={{fontSize:11,fontWeight:500,color:C.t2,marginTop:4}}>Новых задачи</div>
+          <div style={{fontSize:10,color:C.gM,fontWeight:600,marginTop:3}}>↑ +2 сегодня</div>
+        </div>
+        <div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:6,marginBottom:10}}>
+            {kpiData.slice(1).map((k,i)=>(
+              <div key={i} style={{textAlign:'center',padding:'7px 4px',borderRadius:10,background:`${C[k.c+'C']}66`,border:`1px solid ${C[k.c+'C']}99`}}>
+                <div style={{fontSize:20,fontWeight:300,color:C[k.c+'M'],lineHeight:1}}>{k.v}</div>
+                <div style={{fontSize:7,color:C[k.c+'COn'],fontWeight:700,marginTop:3,textTransform:'uppercase',letterSpacing:'.5px'}}>{k.l.split(' ')[0]}</div>
+              </div>
+            ))}
+          </div>
+          <Prog pct={20} c="p" h={3}/>
+        </div>
+      </div>
+    </W>
+  );
+  return(
+    <W size={size} title="KPI-счётчики" sub="Обновлено 5 мин. назад" iconBg={C.pC} icon={<IcoBars/>} badge="Live" badgeC="g" acc="p">
+      <MetaRow scope="Отдел" subject="ОГА" period="Сегодня" metric="19 задач" delta="+2%"/>
+      <div style={{display:'grid',gridTemplateColumns:xl||wide?'repeat(4,1fr)':'repeat(2,1fr)',gap:10}}>
+        {kpiData.map((it,i)=><KTile key={i} it={it} big={med}/>)}
+      </div>
+      {(xl||wide)&&(
+        <div style={{marginTop:16}}>
+          <div style={{fontSize:11,color:C.t3,fontWeight:500,marginBottom:8}}>Динамика за 30 дней</div>
+          <BarSVG vals={[14,22,18,30,25,20,27,19,35,28,22,16,31,24,18,29,33,21,26,38]} colors={[C.pM]} h={xl?90:72} accent={19}/>
+        </div>
+      )}
+    </W>
+  );
+};
+
+/* ──────────────────────────────────────────────────────
+   W02 · ANALYTICS CHART
+────────────────────────────────────────────────────── */
+const W02=({size='standard',state='bar'})=>{
+  const cmp=size==='compact',med=size==='medium';
+  const h=cmp?52:med?65:size==='wide'?100:size==='xl'?120:82;
+  const metas={bar:{scope:'Отдел',subject:'ОГА',period:'7 дней',metric:'43 задачи',delta:'+12%'},line:{scope:'Управление',subject:'Градостроит.',period:'30 дней',metric:'Откр. vs закр.',delta:'+4%'},donut:{scope:'Сотрудник',subject:'Смирнов А.В.',period:'Тек. месяц',metric:'50 задач',delta:'+62%'}};
+  const subs={bar:'Задачи по дням',line:'Динамика задач',donut:'Статусы'};
+  if(cmp) return(
+    <W size={size} title="Аналитика" iconBg={C.pC} icon={<IcoLine/>} noFoot acc="p">
+      <div style={{display:'flex',flexDirection:'column',height:'100%'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:6}}>
+          <span style={{fontSize:9,fontWeight:600,textTransform:'uppercase',letterSpacing:'.7px',color:C.t3}}>Задачи · 7 дней</span>
+          <span style={{fontSize:10,fontWeight:700,color:C.gM}}>↑ 12%</span>
+        </div>
+        <div style={{display:'flex',alignItems:'baseline',gap:6,marginBottom:8}}>
+          <span style={{fontSize:38,fontWeight:200,color:C.pM,lineHeight:1,letterSpacing:'-2px'}}>43</span>
+          <span style={{fontSize:11,color:C.t3}}>задачи</span>
+        </div>
+        <div style={{flex:1,minHeight:0}}><BarSVG vals={[14,22,18,30,25,20,27]} colors={[C.pM]} h={h} accent={3}/></div>
+        <div style={{display:'flex',justifyContent:'space-around',fontSize:8,color:C.t3,fontWeight:500,marginTop:3}}>
+          {['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].map(d=><span key={d}>{d}</span>)}
+        </div>
+      </div>
+    </W>
+  );
+  return(
+    <W size={size} title="Аналитический график" sub={subs[state]} iconBg={C.pC} icon={<IcoLine/>} acc="p">
+      {!med&&<MetaRow {...(metas[state]||metas.bar)}/>}
+      {med&&<div style={{display:'flex',justifyContent:'space-between',marginBottom:8,fontSize:11,color:C.t3}}><span>ОГА · 7 дней</span><span style={{color:C.gM,fontWeight:700}}>↑ 12%</span></div>}
+      {state==='bar'&&<BarSVG vals={[14,22,18,30,25,20,27]} colors={[C.pM]} labels={['Пн','Вт','Ср','Чт','Пт','Сб','Вс']} h={h} accent={3}/>}
+      {state==='line'&&(
+        <div>
+          <div style={{display:'flex',gap:14,marginBottom:8,fontSize:11,color:C.t3,flexWrap:'wrap'}}>
+            <span style={{display:'flex',alignItems:'center',gap:5}}><span style={{width:8,height:8,borderRadius:'50%',background:C.p,display:'inline-block'}}/> Открыто</span>
+            <span style={{display:'flex',alignItems:'center',gap:5}}><span style={{width:8,height:8,borderRadius:'50%',background:C.gM,display:'inline-block'}}/> Закрыто</span>
+          </div>
+          <LineSVG datasets={[{pts:[60,45,70,50,80,55,75],c:C.p},{pts:[40,55,35,60,42,65,50],c:C.gM}]} h={h} fill/>
+        </div>
+      )}
+      {state==='donut'&&(
+        <div style={{display:'flex',alignItems:'center',gap:20}}>
+          <DonutSVG segs={[{v:62,c:C.gM},{v:18,c:C.rM},{v:20,c:C.aM}]} sz={med?68:80} label="62%" sub="Выполн."/>
+          <div>{[['Выполнено',62,C.gM],['Просрочено',18,C.rM],['В работе',20,C.aM]].map(([l,v,c])=>(
+            <div key={l} style={{display:'flex',alignItems:'center',gap:8,fontSize:11,color:C.t2,marginBottom:8}}>
+              <div style={{width:9,height:9,borderRadius:3,background:c,flexShrink:0}}/>
+              <span style={{flex:1}}>{l}</span>
+              <span style={{fontWeight:700,color:C.t1}}>{v}%</span>
+            </div>
+          ))}</div>
+        </div>
+      )}
+    </W>
+  );
+};
+
+/* ──────────────────────────────────────────────────────
+   W03 · VIOLATIONS
+────────────────────────────────────────────────────── */
+const violData=[
+  {l:'Просрочено > 7 дней',v:3,c:'r',p:60,tag:'Критично'},
+  {l:'SLA под угрозой',v:5,c:'a',p:100,tag:'Важно'},
+  {l:'Ожидают согласования',v:8,c:'p',p:80,tag:'Информация'},
+  {l:'Возвращено на доработку',v:2,c:'g',p:40,tag:'Норма'}
+];
+
+const W03=({size='standard'})=>{
+  const cmp=size==='compact',med=size==='medium';
+  const rows=cmp?violData.slice(0,2):med?violData.slice(0,3):violData;
+  return(
+    <W size={size} title={cmp?'Нарушения':'Нарушения и просрочки'} sub="По активным задачам" iconBg={C.rC} icon={<IcoWarn/>} badge="8 критич." badgeC="r" acc="r" noFoot={cmp}>
+      {cmp&&<div style={{fontSize:9,fontWeight:700,textTransform:'uppercase',letterSpacing:'.8px',color:C.rM,marginBottom:8}}>Всего нарушений: 18</div>}
+      <div style={{display:'flex',flexDirection:'column',gap:8}}>
+        {rows.map((r,i)=>(
+          <div key={i} style={{display:'flex',alignItems:'center',gap:10,padding:cmp?'8px 10px':'10px 12px',borderRadius:12,background:i===0?`${C.rC}55`:i===1?`${C.aC}44`:C.sf2,border:`1px solid ${C[r.c+'C']}99`,cursor:'pointer'}}
+            onMouseEnter={e=>e.currentTarget.style.filter='brightness(.97)'}
+            onMouseLeave={e=>e.currentTarget.style.filter='none'}>
+            <div style={{flex:1,minWidth:0}}>
+              <div style={{fontSize:cmp?11:12,fontWeight:500,color:C.t1,marginBottom:cmp?0:5,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{r.l}</div>
+              {!cmp&&<Prog pct={r.p} c={r.c} h={3}/>}
+            </div>
+            <div style={{textAlign:'right',flexShrink:0}}>
+              <div style={{fontSize:cmp?22:26,fontWeight:200,color:C[r.c+'M'],lineHeight:1}}>{r.v}</div>
+              {!cmp&&<div style={{fontSize:9,color:C[r.c+'COn'],fontWeight:700,marginTop:2,letterSpacing:'.2px'}}>{r.tag}</div>}
+            </div>
+          </div>
+        ))}
+      </div>
+    </W>
+  );
+};
+
+/* ──────────────────────────────────────────────────────
+   W04 · PROCESS FUNNEL
+────────────────────────────────────────────────────── */
+const funnelData=[
+  {l:'Инициация',v:120,c:C.pM},
+  {l:'Согласование',v:87,c:C.pM},
+  {l:'Экспертиза',v:54,c:C.gM},
+  {l:'Утверждение',v:32,c:C.gM},
+  {l:'Выдача',v:18,c:C.aM}
+];
+
+const W04=({size='standard'})=>{
+  const cmp=size==='compact',med=size==='medium';
+  const stages=cmp?funnelData.slice(0,3):med?funnelData.slice(0,4):funnelData;
+  const maxV=stages[0].v||1;
+  return(
+    <W size={size} title={cmp?'Воронка':'Воронка процесса'} sub="Согласование ГПЗУ" iconBg={C.pC} icon={<IcoFilter/>} acc="p" noFoot={cmp}>
+      {cmp&&<div style={{fontSize:9,fontWeight:600,textTransform:'uppercase',letterSpacing:'.7px',color:C.t3,marginBottom:8}}>Согласование ГПЗУ</div>}
+      <div style={{display:'flex',flexDirection:'column',gap:cmp?5:7}}>
+        {stages.map((s,i)=>{
+          const conv=i>0?Math.round(s.v/stages[i-1].v*100):100;
+          const barW=s.v/maxV*100,marg=(100-barW)/2;
+          return(
+            <div key={i}>
+              <div style={{display:'flex',justifyContent:'space-between',fontSize:cmp?10:11,color:C.t2,marginBottom:3}}>
+                <span style={{fontWeight:i===0?600:400}}>{s.l}</span>
+                <div style={{display:'flex',alignItems:'center',gap:8}}>
+                  {i>0&&!cmp&&<span style={{fontSize:9,color:C.t3,background:C.sf3,padding:'1px 5px',borderRadius:4}}>{conv}%</span>}
+                  <span style={{fontWeight:700,color:C.t1}}>{s.v}</span>
+                </div>
+              </div>
+              <div style={{background:C.sf3,borderRadius:7,height:cmp?16:20,position:'relative',overflow:'hidden'}}>
+                <div style={{position:'absolute',left:`${marg}%`,width:`${barW}%`,height:'100%',background:`linear-gradient(90deg,${s.c}dd,${s.c}99)`,borderRadius:7,display:'flex',alignItems:'center',justifyContent:'center'}}>
+                  {!cmp&&<span style={{fontSize:9,fontWeight:700,color:'#fff'}}>{Math.round(s.v/maxV*100)}%</span>}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </W>
+  );
+};
+
+/* ──────────────────────────────────────────────────────
+   W05 · TOP-5
+────────────────────────────────────────────────────── */
+const top5Tabs=[{key:'performers',label:'По закрытым'},{key:'depts',label:'По отделам'},{key:'tasktype',label:'По типам'}];
+const top5Data={
+  performers:[['Смирнов А.В.','ОГА',42,C.p],['Козлова Н.С.','ОТП',38,C.gM],['Попов Д.Р.','ОКС',35,C.aM],['Лебедев М.О.','ОГА',31,C.puM],['Новикова Е.В.','ОТП',28,C.rM]],
+  depts:[['ОГА','Отдел гл. архитектора',128,C.p],['ОТП','Отдел тех. политики',114,C.gM],['ОКС','Отдел кап. строит.',97,C.aM],['ОПЗ','Отдел план. зонир.',83,C.tlM],['ОГД','Отдел градостроит.',76,C.puM]],
+  tasktype:[['Согласование ГПЗУ','По регламенту',54,C.p],['Разрешение на строит.','По заявкам',43,C.rM],['Экспертиза ПД','Эксп. отдел',38,C.gM],['Ввод в эксплуатацию','По заявкам',31,C.aM],['Мониторинг ОКС','Контрольный',22,C.tlM]]
+};
+const medals=['#E8A000','#8E9297','#AD6B3D',C.t3,C.t3];
+
+const W05=({size='standard',state='default'})=>{
+  const [tab,setTab]=useState('performers');
+  const xl=size==='xl',wide=size==='wide';
+  const rows=top5Data[tab]||top5Data.performers;
+  const mx=rows[0]?.[2]||1;
+  if(xl) return(
+    <W size={size} title="Топ-5 показателей" sub="Рейтинг по трём срезам" iconBg={C.gC} icon={<IcoStar/>} acc="g">
+      <Tabs tabs={top5Tabs} active={tab} onChange={setTab}/>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(3,minmax(0,1fr))',gap:14}}>
+        {top5Tabs.map(t=>(
+          <div key={t.key} style={{background:t.key===tab?`${C.pC}44`:C.sf2,border:`1px solid ${t.key===tab?C.p+'33':C.ol+'33'}`,borderRadius:14,padding:'12px 12px 8px'}}>
+            <div style={{fontSize:11,fontWeight:600,color:t.key===tab?C.p:C.t2,marginBottom:10}}>{t.label}</div>
+            {(top5Data[t.key]||[]).map((it,i)=>(
+              <div key={i} className="lrow" style={{display:'flex',alignItems:'center',gap:8,padding:'7px 0'}}>
+                <div style={{fontSize:11,fontWeight:700,color:medals[i],width:18,textAlign:'center',flexShrink:0}}>{i+1}</div>
+                <Av t={it[0].split(' ').map(x=>x[0]).join('').slice(0,2)} bg={it[3]} s={26}/>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontSize:11,fontWeight:500,color:C.t1,overflow:'hidden',whiteSpace:'nowrap',textOverflow:'ellipsis'}}>{it[0]}</div>
+                </div>
+                <span style={{fontSize:13,fontWeight:500,color:C.p,flexShrink:0}}>{it[2]}</span>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </W>
+  );
+  return(
+    <W size={size} title="Топ-5 показателей" sub={top5Tabs.find(t=>t.key===tab)?.label} iconBg={C.gC} icon={<IcoStar/>} acc="g">
+      <Tabs tabs={top5Tabs} active={tab} onChange={setTab} sm={size==='medium'}/>
+      {rows.slice(0,size==='medium'?3:5).map((it,i)=>(
+        <div key={i} className="lrow" style={{display:'flex',alignItems:'center',gap:8,padding:'8px 4px'}}>
+          <div style={{fontSize:13,fontWeight:700,color:medals[i],width:22,textAlign:'center',flexShrink:0}}>{i+1}</div>
+          <Av t={it[0].split(' ').map(x=>x[0]).join('').slice(0,2)} bg={it[3]} s={28}/>
+          <div style={{flex:1,minWidth:0}}>
+            <div style={{fontSize:12,fontWeight:500,color:C.t1,overflow:'hidden',whiteSpace:'nowrap',textOverflow:'ellipsis'}}>{it[0]}</div>
+            <div style={{fontSize:10,color:C.t3,marginTop:1}}>{it[1]}</div>
+          </div>
+          {(wide||size==='standard')&&<div style={{flex:'0 0 72px'}}><Prog pct={Math.round((it[2]||0)/mx*100)} c="p" h={3}/></div>}
+          <div style={{fontSize:14,fontWeight:600,color:C.p,width:32,textAlign:'right',flexShrink:0}}>{it[2]}</div>
+        </div>
+      ))}
+    </W>
+  );
+};
+
+/* ──────────────────────────────────────────────────────
+   W06 · MY TASKS
+────────────────────────────────────────────────────── */
+const taskData=[
+  {id:'ЗД-1024',t:'Согласование ГПЗУ ул. Ленина 45',sl:'Просрочено',sc:'r',d:'28.03',dep:'ОГА'},
+  {id:'ЗД-1031',t:'Проверка документов ПМТ Садовая',sl:'В работе',sc:'g',d:'02.04',dep:'ОТП'},
+  {id:'ЗД-1035',t:'Заключение по объекту №338',sl:'Новая',sc:'p',d:'05.04',dep:'ОКС'},
+  {id:'ЗД-1038',t:'Ответ на запрос Мосгорпроекта',sl:'На проверке',sc:'a',d:'03.04',dep:'ОГА'},
+  {id:'ЗД-1041',t:'Реестр объектов ИЖС',sl:'Новая',sc:'p',d:'07.04',dep:'ОТП'},
+  {id:'ЗД-1043',t:'Обновление охранных зон',sl:'Готово',sc:'g',d:'31.03',dep:'ОКС'}
+];
+
+const ListView=({n=4})=>(
+  <table style={{width:'100%',borderCollapse:'collapse',fontSize:11}}>
+    <thead><tr>
+      {['','ID','Задача','Статус','Срок','Отдел'].map((h,i)=>(
+        <th key={i} style={{textAlign:'left',padding:'2px 6px 8px',borderBottom:`1.5px solid ${C.ol}55`,fontSize:8.5,fontWeight:700,textTransform:'uppercase',letterSpacing:'.7px',color:C.t3}}>{h}</th>
+      ))}
+    </tr></thead>
+    <tbody>
+      {taskData.slice(0,n).map((r,i)=>(
+        <tr key={i} className="lrow">
+          <td style={{padding:'5px 4px 5px 0'}}><div style={{width:3,height:22,borderRadius:3,background:C[r.sc+'M']||C.p}}/></td>
+          <td style={{padding:'5px 6px',color:C.p,fontWeight:600,fontSize:10,whiteSpace:'nowrap'}}>{r.id}</td>
+          <td style={{padding:'5px 6px',maxWidth:180}}><div style={{overflow:'hidden',whiteSpace:'nowrap',textOverflow:'ellipsis',fontSize:11,color:C.t1}}>{r.t}</div></td>
+          <td style={{padding:'5px 6px'}}><Chip c={r.sc} sm>{r.sl}</Chip></td>
+          <td style={{padding:'5px 6px',fontSize:10,color:r.sc==='r'?C.rM:C.t3,fontWeight:r.sc==='r'?600:400}}>{r.d}</td>
+          <td style={{padding:'5px 6px',fontSize:10,color:C.t3}}>{r.dep}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+);
+
+const KanbanView=({cols4=false})=>{
+  const cols=cols4
+    ?[{t:'Новые',c:C.p,cnt:3,cards:[{t:'Заключение по объекту №338',d:'05.04',sc:'p'},{t:'Реестр объектов ИЖС',d:'07.04',sc:'p'}]},{t:'В работе',c:C.gM,cnt:4,cards:[{t:'Проверка ПМТ Садовая',d:'02.04',sc:'g'},{t:'Схема планировки кв.5',d:'04.04',sc:'g'}]},{t:'На проверке',c:C.aM,cnt:2,cards:[{t:'Ответ Мосгорпроекту',d:'03.04',sc:'a'}]},{t:'Просрочено',c:C.rM,cnt:3,cards:[{t:'ГПЗУ ул. Ленина 45',d:'28.03',sc:'r'},{t:'ПМТ ул. Кирова',d:'30.03',sc:'r'}]}]
+    :[{t:'Новые',c:C.p,cnt:3,cards:[{t:'Заключение по объекту №338',d:'05.04',sc:'p'}]},{t:'В работе',c:C.gM,cnt:4,cards:[{t:'Проверка ПМТ Садовая',d:'02.04',sc:'g'}]},{t:'Просрочено',c:C.rM,cnt:3,cards:[{t:'ГПЗУ ул. Ленина 45',d:'28.03',sc:'r'}]}];
+  return(
+    <div style={{display:'grid',gridTemplateColumns:`repeat(${cols.length},1fr)`,gap:8}}>
+      {cols.map((col,ci)=>(
+        <div key={ci} className="kcol">
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+            <span style={{fontSize:9,fontWeight:700,textTransform:'uppercase',letterSpacing:'.6px',color:col.c}}>{col.t}</span>
+            <span style={{background:C.sf,borderRadius:999,padding:'1px 7px',fontSize:9,fontWeight:600,color:C.t3,border:`1px solid ${C.ol}44`}}>{col.cnt}</span>
+          </div>
+          {col.cards.map((k,ki)=>(
+            <div key={ki} className="kcard">
+              <div style={{width:'100%',height:2,borderRadius:2,background:C[k.sc+'M']||C.p,marginBottom:7}}/>
+              <div style={{fontSize:10,fontWeight:500,color:C.t1,lineHeight:1.4,marginBottom:4}}>{k.t}</div>
+              <div style={{fontSize:9,color:C.t3}}>{k.d}</div>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const GanttView=({n=5})=>{
+  const bars=[{id:'CDP-128',start:0,len:2,c:C.rM},{id:'CDP-127',start:0,len:3,c:C.aM},{id:'CDP-126',start:1,len:5,c:C.aM},{id:'CDP-124',start:3,len:8,c:C.p},{id:'CDP-125',start:3,len:2,c:C.gM}];
+  const cols=12,days=['28','29','30','1','2','3','4','5','6','7','8','9'];
+  return(
+    <table style={{width:'100%',borderCollapse:'collapse',fontSize:9,minWidth:320}}>
+      <thead><tr>
+        <th style={{width:80,textAlign:'left',padding:'2px 8px 6px 0',borderBottom:`1.5px solid ${C.ol}50`,fontSize:8.5,fontWeight:700,color:C.t3,letterSpacing:'.5px'}}>ЗАДАЧА</th>
+        {days.slice(0,cols).map((d,i)=><th key={i} style={{textAlign:'center',padding:'2px 0 6px',borderBottom:`1.5px solid ${C.ol}50`,fontSize:7.5,fontWeight:600,color:C.t3,minWidth:32}}>{d}</th>)}
+      </tr></thead>
+      <tbody>
+        {bars.slice(0,n).map((b,bi)=>(
+          <tr key={bi} className="lrow">
+            <td style={{padding:'4px 8px 4px 0'}}>
+              <div style={{fontSize:9,fontWeight:600,color:C.p,background:C.pC,padding:'2px 6px',borderRadius:5,display:'inline-block'}}>{b.id}</div>
+            </td>
+            {Array.from({length:cols},(_,di)=>{
+              if(di===b.start) return<td key={di} colSpan={Math.min(b.len,cols-di)} style={{padding:'3px 2px'}}>
+                <div style={{height:20,borderRadius:7,background:`linear-gradient(90deg,${b.c},${b.c}bb)`,display:'flex',alignItems:'center',paddingLeft:7,fontSize:8,fontWeight:700,color:'#fff'}}>{b.id}</div>
+              </td>;
+              if(di>b.start&&di<b.start+b.len) return null;
+              return<td key={di}/>;
+            })}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+};
+
+const W06=({size='standard',state='list'})=>{
+  const xl=size==='xl',wide=size==='wide';
+  const subs={list:'Список задач',kanban:'Доска канбан',gantt:'Диаграмма Гантт'};
+  return(
+    <W size={size} title="Мои задачи" sub={subs[state]} iconBg={C.gC} icon={<IcoCheck/>} badge="3 срочных" badgeC="r" acc="g">
+      {state==='list'&&<ListView n={xl?taskData.length:wide?5:4}/>}
+      {state==='kanban'&&<KanbanView cols4={xl||wide}/>}
+      {state==='gantt'&&<GanttView n={xl?5:wide?4:3}/>}
+    </W>
+  );
+};
+
+/* ──────────────────────────────────────────────────────
+   W07 · QUICK ACCESS
+────────────────────────────────────────────────────── */
+const services=[['СБИС',C.p,'С'],['Вики',C.puM,'В'],['МосЭДО',C.aM,'М'],['ИАС ОГД','#1a3c7a','И'],['ИАИС РиН','#A31564','Р'],['РГИС',C.tlM,'Р'],['СПС УП',C.gM,'С'],['Задачник',C.g,'З']];
+const actions=[['Новая задача',C.gM,'✚'],['Создать документ',C.p,'📄'],['Подать заявление',C.aM,'📋'],['Поиск сотрудника',C.tlM,'🔍'],['Запрос справки',C.puM,'📊'],['Согласовать',C.gM,'✓']];
+
+const W07=({size='standard',state='services'})=>{
+  const cmp=size==='compact',med=size==='medium',xl=size==='xl',wide=size==='wide';
+  const items=state==='services'?services:actions;
+  const cols=cmp?2:med?3:xl||wide?4:3;
+  const show=cmp?items.slice(0,4):med?items.slice(0,6):items;
+  return(
+    <W size={size} title="Быстрый доступ" sub={state==='services'?'Сервисы и системы':'Быстрые действия'} iconBg={C.aC} icon={<IcoBolt/>} acc="a" noFoot={cmp}>
+      <div style={{display:'grid',gridTemplateColumns:`repeat(${cols},minmax(0,1fr))`,gap:8}}>
+        {show.map((s,i)=>(
+          <div key={i} className="svc-btn" style={{background:`linear-gradient(135deg,${s[1]}16,${s[1]}0a)`}}>
+            <div style={{width:36,height:36,borderRadius:10,background:s[1],display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontWeight:700,fontSize:state==='actions'?16:14,flexShrink:0,boxShadow:`0 2px 8px ${s[1]}55`}}>{s[2]}</div>
+            <div style={{fontSize:11,fontWeight:500,color:C.t1,lineHeight:1.25,minWidth:0,wordBreak:'break-word'}}>{s[0]}</div>
+          </div>
+        ))}
+        {!cmp&&(
+          <div className="addbtn" style={{minHeight:56}}>
+            <div style={{width:30,height:30,borderRadius:'50%',background:C.pC,display:'flex',alignItems:'center',justifyContent:'center'}}><IcoPlus c={C.p} s={14}/></div>
+            <span style={{fontSize:11,fontWeight:500,color:C.p}}>Добавить</span>
+          </div>
+        )}
+      </div>
+    </W>
+  );
+};
+
+/* ──────────────────────────────────────────────────────
+   W08 · FAVORITES
+────────────────────────────────────────────────────── */
+const favTasks=[['Предоставление информации из сводного плана подземных коммуникаций','Надежда Турилова','Активная','p'],['Согласование охранных зон объектов культурного наследия','Алексей Смирнов','На проверке','a'],['Предоставление информации из сводного плана коммуникаций','Надежда Турилова','Новая','tl'],['Предоставление сводного плана подземных инженерных сетей','Надежда Турилова','Активная','p']];
+const favOpps=[['Расширение квартала Р-5 по программе КРТ в Западном округе','Иван Петров','Высокий','g'],['Реновация промзоны Бирюлёво с переводом в жилую функцию','Мария Соколова','Средний','a'],['Строительство МФЦ «Новая Москва» в ТиНАО','Дмитрий Козлов','Новый','tl']];
+
+const FCard=({it})=>(
+  <div className="fcard">
+    <div style={{display:'flex',alignItems:'flex-start',gap:10,marginBottom:8}}>
+      <div style={{width:4,alignSelf:'stretch',borderRadius:4,background:C[it[3]+'M']||C.p,flexShrink:0,minHeight:36}}/>
+      <div style={{flex:1,minWidth:0}}>
+        <div style={{fontSize:12,fontWeight:500,color:C.t1,lineHeight:1.45,display:'-webkit-box',WebkitLineClamp:2,WebkitBoxOrient:'vertical',overflow:'hidden'}}>{it[0]}</div>
+        <div style={{fontSize:10,color:C.t3,marginTop:4}}>{it[1]}</div>
+      </div>
+    </div>
+    <div style={{display:'flex',alignItems:'center',gap:6,paddingTop:8,borderTop:`1px solid ${C.ol}44`}}>
+      <Chip c={it[3]} sm>{it[2]}</Chip>
+      <span style={{marginLeft:'auto',fontSize:10,color:C.t3}}>2 ч назад</span>
+    </div>
+  </div>
+);
+
+const W08=({size='standard',state='tasks'})=>{
+  const data=state==='tasks'?favTasks:favOpps;
+  const cmp=size==='compact',med=size==='medium',xl=size==='xl',wide=size==='wide';
+  const items=cmp?data.slice(0,1):med?data.slice(0,2):data;
+  const cols=cmp?1:xl||wide?3:2;
+  return(
+    <W size={size} title="Избранное" sub={state==='tasks'?`${data.length} задачи`:`${data.length} возможности`} iconBg={C.aC} icon={<IcoHeart/>} acc="a">
+      <div style={{display:'grid',gridTemplateColumns:`repeat(${cols},1fr)`,gap:10}}>
+        {items.map((it,i)=><FCard key={i} it={it}/>)}
+        {!cmp&&(
+          <div className="addbtn" style={{minHeight:88}}>
+            <div style={{width:34,height:34,borderRadius:'50%',background:C.pC,display:'flex',alignItems:'center',justifyContent:'center'}}><IcoPlus c={C.p}/></div>
+            <span style={{fontSize:12,fontWeight:500,color:C.p}}>Добавить</span>
+          </div>
+        )}
+      </div>
+    </W>
+  );
+};
+
+/* ──────────────────────────────────────────────────────
+   W09 · MY DOCUMENTS
+────────────────────────────────────────────────────── */
+const docsData={
+  recent:[['ДОК-3412','ГПЗУ ул. Тверская 18','pdf','На подписи','a','28.03'],['ДОК-3418','ТУ подключения объекта А','docx','Согласование','p','01.04'],['ДОК-3425','Акт проверки №214','pdf','Подписан','g','25.03'],['ДОК-3429','Схема планировки кв.5','xlsx','Новый','p','31.03']],
+  pending:[['ДОК-3412','ГПЗУ ул. Тверская 18','pdf','На подписи','a','28.03'],['ДОК-3433','Заключение экспертизы №77','pdf','Просрочено','r','27.03'],['ДОК-3441','Договор аренды №55','docx','На подписи','a','01.04']],
+  approval:[['ДОК-3418','ТУ подключения объекта А','docx','Согласование','p','01.04'],['ДОК-3451','Регламент работы ОГА','docx','Согласование','p','03.04']]
+};
+const typeC={pdf:C.rM,docx:C.p,xlsx:C.gM,pptx:C.aM};
+
+const W09=({size='standard',state='recent'})=>{
+  const rows=docsData[state]||docsData.recent;
+  const cmp=size==='compact',med=size==='medium';
+  const show=cmp?rows.slice(0,3):med?rows.slice(0,3):rows;
+  const subs={recent:'Последние документы',pending:`На подписи (${docsData.pending.length})`,approval:`На согласовании (${docsData.approval.length})`};
+  return(
+    <W size={size} title="Мои документы" sub={subs[state]} iconBg={C.pC} icon={<IcoFile/>} badge={state==='pending'?'2 срочно':''} badgeC="r" acc="p">
+      <table style={{width:'100%',borderCollapse:'collapse',fontSize:11}}>
+        <thead><tr>
+          {(cmp?['Тип','Документ','Статус']:['Тип','№','Документ','Статус','Дата']).map((h,i)=>(
+            <th key={i} style={{textAlign:'left',padding:'2px 6px 8px',borderBottom:`1.5px solid ${C.ol}50`,fontSize:8.5,fontWeight:700,textTransform:'uppercase',letterSpacing:'.6px',color:C.t3}}>{h}</th>
+          ))}
+        </tr></thead>
+        <tbody>
+          {show.map((r,i)=>(
+            <tr key={i} className="lrow">
+              <td style={{padding:'6px 6px'}}>
+                <div style={{width:cmp?24:28,height:cmp?28:32,borderRadius:6,background:typeC[r[2]]||C.p,display:'flex',alignItems:'center',justifyContent:'center',fontSize:7,fontWeight:700,color:'#fff',letterSpacing:'.4px',boxShadow:`0 2px 6px ${(typeC[r[2]]||C.p)}55`}}>{r[2].toUpperCase()}</div>
+              </td>
+              {!cmp&&<td style={{padding:'6px',color:C.p,fontWeight:500,fontSize:10,whiteSpace:'nowrap'}}>{r[0]}</td>}
+              <td style={{padding:'6px',maxWidth:cmp?120:160}}><div style={{overflow:'hidden',whiteSpace:'nowrap',textOverflow:'ellipsis',fontSize:11,color:C.t1}}>{r[1]}</div></td>
+              <td style={{padding:'6px'}}><Chip c={r[4]} sm>{r[3]}</Chip></td>
+              {!cmp&&<td style={{padding:'6px',fontSize:10,color:C.t3,whiteSpace:'nowrap'}}>{r[5]}</td>}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </W>
+  );
+};
+
+/* ──────────────────────────────────────────────────────
+   W10 · MY APPLICATIONS
+────────────────────────────────────────────────────── */
+const appData={
+  active:[['ЗЯВ-891','Предварит. согласование ГПЗУ',3,5,60,'Экспертиза','p','14.03.2026'],['ЗЯВ-903','Разрешение на строительство',1,4,25,'Регистрация','tl','29.03.2026'],['ЗЯВ-915','Ввод объекта в эксплуатацию',4,4,90,'Финальная пров.','g','20.03.2026'],['ЗЯВ-923','Изм. разрешённого использования',2,5,40,'Согласование','a','05.04.2026']],
+  archive:[['ЗЯВ-845','Выдача ГПЗУ ул. Садовая 12',5,5,100,'Выдано','g','10.02.2026'],['ЗЯВ-862','Разрешение на строит. ул. Ленина',4,4,100,'Выдано','g','01.03.2026'],['ЗЯВ-877','Технические условия подключения',3,4,75,'Отказано','r','15.03.2026']]
+};
+
+const W10=({size='standard',state='active'})=>{
+  const rows=appData[state]||appData.active;
+  const xl=size==='xl',wide=size==='wide';
+  const show=wide||xl?rows:rows.slice(0,3);
+  return(
+    <W size={size} title="Мои заявления" sub={state==='active'?`${rows.length} активных`:'Архив заявлений'} iconBg={C.gC} icon={<IcoDesktop/>} badge={state==='active'?'3 активных':''} badgeC="g" acc="g">
+      <table style={{width:'100%',borderCollapse:'collapse',fontSize:11}}>
+        <thead><tr>
+          {['№','Наименование','Стадия','Прогресс','Дата'].map((h,i)=>(
+            <th key={i} style={{textAlign:'left',padding:'2px 6px 8px',borderBottom:`1.5px solid ${C.ol}50`,fontSize:8.5,fontWeight:700,textTransform:'uppercase',letterSpacing:'.6px',color:C.t3}}>{h}</th>
+          ))}
+        </tr></thead>
+        <tbody>
+          {show.map((r,i)=>(
+            <tr key={i} className="lrow">
+              <td style={{padding:'6px',color:C.p,fontWeight:600,fontSize:10,whiteSpace:'nowrap'}}>{r[0]}</td>
+              <td style={{padding:'6px',maxWidth:160}}><div style={{overflow:'hidden',whiteSpace:'nowrap',textOverflow:'ellipsis',fontSize:11,color:C.t1}}>{r[1]}</div></td>
+              <td style={{padding:'6px'}}><Chip c={r[6]} sm>{r[5]}</Chip></td>
+              <td style={{padding:'6px',minWidth:96}}>
+                <div style={{display:'flex',alignItems:'center',gap:6}}>
+                  <div style={{flex:1}}><Prog pct={r[4]} c={r[6]} h={4}/></div>
+                  <span style={{fontSize:9,color:C.t3,whiteSpace:'nowrap',fontWeight:600}}>{r[2]}/{r[3]}</span>
+                </div>
+              </td>
+              <td style={{padding:'6px',fontSize:10,color:C.t3,whiteSpace:'nowrap'}}>{r[7]}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </W>
+  );
+};
+
+/* ──────────────────────────────────────────────────────
+   W11 · TEAM ACTIVITY
+────────────────────────────────────────────────────── */
+const actData=[
+  {av:'КН',action:'закрыла задачу',ref:'ЗД-1038',t:'9:41',c:C.gM,tag:'g'},
+  {av:'СА',action:'создал документ',ref:'ДОК-3451',t:'9:22',c:C.p,tag:'p'},
+  {av:'ПД',action:'добавил комментарий',ref:'ЗД-1031',t:'8:55',c:C.aM,tag:'a'},
+  {av:'ЛМ',action:'просрочил задачу',ref:'ЗД-1024',t:'вчера',c:C.rM,tag:'r'},
+  {av:'НЕ',action:'создал заявление',ref:'ЗЯВ-923',t:'вчера',c:C.tlM,tag:'tl'}
+];
+
+const W11=({size='standard'})=>{
+  const cmp=size==='compact',med=size==='medium';
+  const rows=cmp?actData.slice(0,3):med?actData.slice(0,4):actData;
+  return(
+    <W size={size} title={cmp?'Команда':'Активность команды'} sub="Последние действия" iconBg={C.puC} icon={<IcoUsers/>} acc="pu" noFoot={cmp}>
+      {rows.map((it,i)=>(
+        <div key={i} style={{display:'flex',alignItems:'center',gap:10,padding:'8px 0',borderBottom:i<rows.length-1?`1px solid ${C.ol}30`:'none',cursor:'pointer',borderRadius:8,transition:'background .1s'}}
+          onMouseEnter={e=>e.currentTarget.style.background='rgba(24,87,192,.03)'}
+          onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+          <div style={{position:'relative',flexShrink:0}}>
+            <Av t={it.av} bg={it.c} s={32}/>
+            <div style={{position:'absolute',bottom:-1,right:-1,width:10,height:10,borderRadius:'50%',background:it.c,border:'2px solid #fff'}}/>
+          </div>
+          <div style={{flex:1,minWidth:0}}>
+            <div style={{fontSize:12,color:C.t2,overflow:'hidden',whiteSpace:'nowrap',textOverflow:'ellipsis'}}>
+              <span style={{fontWeight:600,color:C.t1}}>{it.av} </span>{it.action}
+            </div>
+            <div style={{fontSize:11,color:C.p,fontWeight:500,marginTop:2}}>{it.ref}</div>
+          </div>
+          <div style={{fontSize:10,color:C.t3,flexShrink:0,textAlign:'right'}}>
+            <div>{it.t}</div>
+            <div style={{marginTop:3}}><Chip c={it.tag} sm>{it.c===C.gM?'закрыто':it.c===C.rM?'просроч':it.c===C.p?'создано':'коммент'}</Chip></div>
+          </div>
+        </div>
+      ))}
+    </W>
+  );
+};
+
+/* ──────────────────────────────────────────────────────
+   W12 · CALENDAR
+────────────────────────────────────────────────────── */
+const calWeek=[{dow:'ПН',day:'28',events:[]},{dow:'ВТ',day:'29',events:[]},{dow:'СР',day:'30',events:[]},{dow:'ЧТ',day:'31',events:[{label:'ЗД-1024',c:C.rM},{label:'Комиссия',c:C.p},{label:'Совещ.',c:C.gM}],active:true},{dow:'ПТ',day:'1',events:[{label:'Отчёт',c:C.gM}]},{dow:'СБ',day:'2',events:[]},{dow:'ВС',day:'3',events:[{label:'Коор.',c:C.puM}]}];
+const calEvts=[{time:'10:00',title:'Совещание по ГП',place:'Зал 3',c:C.p},{time:'12:30',title:'Согласование ГПЗУ №214',place:'Онлайн',c:C.gM},{time:'15:00',title:'Приёмная комиссия',place:'Каб. 211',c:C.aM}];
+const calMini=[{dow:'ПН',day:'30',dot:true,active:false},{dow:'ВТ',day:'31',dot:true,active:true},{dow:'СР',day:'1',dot:true,active:false},{dow:'ЧТ',day:'2',dot:true,active:false},{dow:'ПТ',day:'3',dot:false,active:false}];
+
+const W12=({size='standard'})=>{
+  const cmp=size==='compact',med=size==='medium',xl=size==='xl',wide=size==='wide';
+  const week=cmp||med?calMini:[{dow:'ВС',day:'29',dot:false,active:false},...calMini,{dow:'СБ',day:'4',dot:false,active:false}];
+  const evts=cmp?calEvts.slice(0,2):calEvts;
+  if(xl) return(
+    <W size={size} title="Мой календарь" sub="Март – Апрель 2026" iconBg={C.pC} icon={<IcoCal/>} acc="p" foot={<TLink>Открыть полный календарь</TLink>}>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(7,minmax(0,1fr))',gap:12}}>
+        {calWeek.map((d,i)=>(
+          <div key={i} className="cday">
+            <div style={{fontSize:10,fontWeight:700,color:C.t3,letterSpacing:'.5px',marginBottom:6}}>{d.dow}</div>
+            <div className="cdnum" style={{fontSize:16,fontWeight:700,marginBottom:8,background:d.active?C.p:'transparent',color:d.active?'#fff':C.t2}}>{d.day}</div>
+            <div style={{display:'flex',flexDirection:'column',gap:4,alignItems:'center'}}>
+              {d.events.map((ev,ei)=>(
+                <div key={ei} style={{fontSize:9,fontWeight:600,padding:'3px 7px',borderRadius:999,background:ev.c,color:'#fff',whiteSpace:'nowrap',maxWidth:'100%',overflow:'hidden',textOverflow:'ellipsis'}}>{ev.label}</div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </W>
+  );
+  return(
+    <W size={size} title="Мой календарь" sub={`Сегодня, 31 марта 2026`} iconBg={C.pC} icon={<IcoCal/>} acc="p" foot={<TLink>Полный календарь</TLink>} noFoot={cmp}>
+      <div style={{display:'grid',gridTemplateColumns:`repeat(${week.length},minmax(0,1fr))`,gap:cmp?4:8,marginBottom:14}}>
+        {week.map((d,i)=>(
+          <div key={i} className="cday">
+            <div style={{fontSize:9,fontWeight:600,color:C.t3,letterSpacing:'.4px',marginBottom:4}}>{d.dow}</div>
+            <div className="cdnum" style={{background:d.active?C.p:'transparent',color:d.active?'#fff':C.t2}}>{d.day}</div>
+            <div style={{height:8,display:'flex',alignItems:'center',justifyContent:'center',marginTop:2}}>
+              {d.dot&&<div style={{width:4,height:4,borderRadius:'50%',background:d.active?C.pC:C.p,opacity:d.active?.7:1}}/>}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div style={{fontSize:11,fontWeight:600,color:C.t2,marginBottom:8}}>Сегодня — 31 марта</div>
+      {evts.map((ev,i)=>(
+        <div key={i} style={{display:'flex',gap:10,alignItems:'center',padding:cmp?'7px 0':'9px 0',borderBottom:i<evts.length-1?`1px solid ${C.ol}44`:'none',cursor:'pointer',borderRadius:6,transition:'background .1s'}}
+          onMouseEnter={e=>e.currentTarget.style.background='rgba(24,87,192,.03)'}
+          onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+          <div style={{fontSize:11,fontWeight:500,color:C.t3,width:38,flexShrink:0}}>{ev.time}</div>
+          <div style={{width:3,height:cmp?24:30,borderRadius:3,background:ev.c,flexShrink:0}}/>
+          <div style={{flex:1,minWidth:0}}>
+            <div style={{fontSize:cmp?11:12,fontWeight:600,color:C.t1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{ev.title}</div>
+            <div style={{fontSize:10,color:C.t3,marginTop:1}}>{ev.place}</div>
+          </div>
+          <div style={{width:8,height:8,borderRadius:'50%',background:ev.c,flexShrink:0}}/>
+        </div>
+      ))}
+    </W>
+  );
+};
+
+/* ──────────────────────────────────────────────────────
+   W13 · NEWS
+────────────────────────────────────────────────────── */
+const newsData=[
+  {tag:'Регламент',text:'Обновлён регламент согласования ГПЗУ — сокращены сроки до 15 дней',date:'09.04',c:'p'},
+  {tag:'Система',text:'Новая версия ИАС ОГД доступна для тестирования',date:'08.04',c:'tl'},
+  {tag:'Событие',text:'Итоги совещания ДГА от 07.04.2026',date:'07.04',c:'g'},
+  {tag:'Нормы',text:'Изменения в нормах строительства 2026',date:'05.04',c:'a'}
+];
+
+const W13=({size='standard'})=>{
+  const cmp=size==='compact',med=size==='medium',wide=size==='wide',xl=size==='xl';
+  const rows=cmp?newsData.slice(0,2):med?newsData.slice(0,3):newsData;
+  return(
+    <W size={size} title="Новости" sub="Официальные новости ДГА" iconBg={C.aC} icon={<IcoNews/>} acc="a">
+      {rows.map((n,i)=>(
+        <div key={i} style={{display:'flex',gap:10,alignItems:'flex-start',padding:cmp?'8px 0':'10px 0',borderBottom:i<rows.length-1?`1px solid ${C.ol}30`:'none',cursor:'pointer',borderRadius:6}}
+          onMouseEnter={e=>e.currentTarget.style.background='rgba(224,140,0,.03)'}
+          onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+          <div style={{width:3,alignSelf:'stretch',borderRadius:3,background:C[n.c+'M']||C.aM,flexShrink:0,minHeight:32}}/>
+          <div style={{flex:1,minWidth:0}}>
+            <div style={{display:'flex',alignItems:'center',gap:6,marginBottom:4}}>
+              <Chip c={n.c} sm>{n.tag}</Chip>
+              <span style={{fontSize:10,color:C.t3,marginLeft:'auto'}}>{n.date}</span>
+            </div>
+            <div style={{fontSize:cmp?11:12,fontWeight:500,color:C.t1,lineHeight:1.45}}>{n.text}</div>
+          </div>
+        </div>
+      ))}
+    </W>
+  );
+};
+
+/* ──────────────────────────────────────────────────────
+   W15 · REGULATORY BASE
+────────────────────────────────────────────────────── */
+const regData=[
+  {l:'Градостроительный кодекс РФ',n:12,c:'p'},
+  {l:'Постановления Правительства Москвы',n:28,c:'g'},
+  {l:'Приказы ДГА',n:7,c:'a'},
+  {l:'Технические регламенты',n:15,c:'tl'}
+];
+
+const W15=({size='standard'})=>{
+  const cmp=size==='compact';
+  const rows=cmp?regData.slice(0,3):regData;
+  return(
+    <W size={size} title={cmp?'Норматив. база':'Нормативная база'} sub="62 документа" iconBg={C.pC} icon={<IcoBook/>} acc="p">
+      {!cmp&&(
+        <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:12,background:C.sf2,border:`1px solid ${C.ol}44`,borderRadius:10,padding:'8px 12px',cursor:'text'}}>
+          <IcoSearch/><span style={{fontSize:12,color:C.t3}}>Поиск нормативного документа...</span>
+        </div>
+      )}
+      {rows.map((r,i)=>(
+        <div key={i} className="lrow" style={{display:'flex',alignItems:'center',gap:10,padding:'9px 4px',cursor:'pointer'}}>
+          <div style={{width:34,height:34,borderRadius:10,background:C[r.c+'C'],display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,boxShadow:`0 2px 6px ${C[r.c+'C']}99`}}>
+            <IcoBook c={C[r.c+'M']}/>
+          </div>
+          <div style={{flex:1,fontSize:12,fontWeight:500,color:C.t1,overflow:'hidden',whiteSpace:'nowrap',textOverflow:'ellipsis'}}>{r.l}</div>
+          <Chip c={r.c} sm>{r.n} doc</Chip>
+        </div>
+      ))}
+    </W>
+  );
+};
+
+/* ──────────────────────────────────────────────────────
+   W16 · STAFF DIRECTORY
+────────────────────────────────────────────────────── */
+const staffData=[
+  ['Алексеев С.П.','Начальник ОГА','ОГА',C.p],
+  ['Смирнова Е.В.','Гл. специалист','ОТП',C.gM],
+  ['Попов Д.Р.','Специалист','ОКС',C.aM],
+  ['Козлова Н.О.','Вед. специалист','ОГА',C.puM],
+  ['Лебедев М.О.','Нач. отдела','ОТП',C.rM],
+  ['Новикова М.С.','Аналитик','ОКС',C.tlM]
+];
+
+const W16=({size='standard',state='search'})=>{
+  const cmp=size==='compact',med=size==='medium',xl=size==='xl',wide=size==='wide';
+  if((xl||wide)&&state==='dept'){
+    return(
+      <W size={size} title="Справочник сотрудников" sub="Отдел главного архитектора" iconBg={C.gC} icon={<IcoPeople/>} acc="g">
+        <div style={{display:'grid',gridTemplateColumns:`repeat(${xl?6:4},1fr)`,gap:10}}>
+          {staffData.map((p,i)=>(
+            <div key={i} style={{background:C.sf2,border:`1px solid ${C.ol}44`,borderRadius:14,padding:'12px 8px',textAlign:'center',cursor:'pointer',transition:'all .15s'}}
+              onMouseEnter={e=>{e.currentTarget.style.boxShadow='0 3px 12px rgba(0,0,0,.1)';e.currentTarget.style.borderColor=C.ol}}
+              onMouseLeave={e=>{e.currentTarget.style.boxShadow='none';e.currentTarget.style.borderColor=`${C.ol}44`}}>
+              <div style={{width:44,height:44,borderRadius:'50%',background:p[3],display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:700,color:'#fff',margin:'0 auto 8px',boxShadow:`0 2px 10px ${p[3]}66`}}>
+                {p[0].split(' ').map(x=>x[0]).join('').slice(0,2)}
+              </div>
+              <div style={{fontSize:10,fontWeight:700,color:C.t1,lineHeight:1.3}}>{p[0]}</div>
+              <div style={{fontSize:9,color:C.t3,marginTop:2}}>{p[1]}</div>
+              <div style={{marginTop:6}}><Chip c="p" sm>{p[2]}</Chip></div>
+            </div>
+          ))}
+        </div>
+      </W>
+    );
+  }
+  const rows=cmp?staffData.slice(0,3):med?staffData.slice(0,4):staffData;
+  return(
+    <W size={size} title={cmp?'Сотрудники':'Справочник сотрудников'} sub="128 сотрудников" iconBg={C.gC} icon={<IcoPeople/>} acc="g">
+      {!cmp&&(
+        <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:12,background:C.sf2,border:`1px solid ${C.ol}44`,borderRadius:10,padding:'8px 12px',cursor:'text'}}>
+          <IcoSearch/><span style={{fontSize:12,color:C.t3}}>Найти сотрудника...</span>
+        </div>
+      )}
+      {rows.map((p,i)=>(
+        <div key={i} className="lrow" style={{display:'flex',alignItems:'center',gap:10,padding:'7px 4px',cursor:'pointer'}}>
+          <Av t={p[0].split(' ').map(x=>x[0]).join('').slice(0,2)} bg={p[3]} s={32}/>
+          <div style={{flex:1,minWidth:0}}>
+            <div style={{fontSize:12,fontWeight:600,color:C.t1,overflow:'hidden',whiteSpace:'nowrap',textOverflow:'ellipsis'}}>{p[0]}</div>
+            <div style={{fontSize:10,color:C.t3,marginTop:1,overflow:'hidden',whiteSpace:'nowrap',textOverflow:'ellipsis'}}>{p[1]}</div>
+          </div>
+          <Chip c="p" sm>{p[2]}</Chip>
+        </div>
+      ))}
+    </W>
+  );
+};
+
+/* ──────────────────────────────────────────────────────
+   W17 · AI CHATBOT  ✦ NEW
+────────────────────────────────────────────────────── */
+const quickQ=['Как согласовать ГПЗУ?','Статус моих задач','Новые регламенты','Найти сотрудника'];
+const botResponses={'гпзу':'Для согласования ГПЗУ подайте заявление через ИАС ОГД. Срок рассмотрения — 20 рабочих дней согласно регламенту ДГА.','задач':'У вас сейчас: 4 новые, 12 в работе, 3 просроченные. Хотите открыть полный список?','регламент':'Обновлён регламент согласования ГПЗУ — сроки сокращены до 15 дней. Документ доступен в нормативной базе.','сотрудник':'Введите имя или отдел в справочнике сотрудников — там 128 специалистов по 5 отделам.'};
+const getBotReply=q=>{const ql=q.toLowerCase();for(const[k,v] of Object.entries(botResponses)){if(ql.includes(k)) return v;}return 'Обрабатываю запрос... Рекомендую обратиться к разделу «Нормативная база» или найти нужный отдел в справочнике.';};
+
+const W17=({size='standard',state='idle'})=>{
+  const [msgs,setMsgs]=useState([{role:'bot',text:'Привет! Я ИИ-ассистент ЕЦП ГД. Задайте вопрос о задачах, документах или регламентах.'}]);
+  const [inp,setInp]=useState('');
+  const [typing,setTyping]=useState(false);
+  const msgsRef=useRef(null);
+  const cmp=size==='compact',med=size==='medium',xl=size==='xl',wide=size==='wide';
+
+  const send=useCallback((text)=>{
+    if(!text.trim()) return;
+    setMsgs(prev=>[...prev,{role:'user',text}]);
+    setInp('');
+    setTyping(true);
+    setTimeout(()=>{
+      setMsgs(prev=>[...prev,{role:'bot',text:getBotReply(text)}]);
+      setTyping(false);
+    },900);
+  },[]);
+
+  useEffect(()=>{if(msgsRef.current) msgsRef.current.scrollTop=msgsRef.current.scrollHeight;},[msgs,typing]);
+
+  if(cmp) return(
+    <W size={size} title="AI-ассистент" iconBg={C.tlC} icon={<IcoBot/>} noFoot acc="tl">
+      <div style={{display:'flex',flexDirection:'column',height:'100%',alignItems:'center',justifyContent:'space-between'}}>
+        <div style={{textAlign:'center',padding:'6px 0'}}>
+          <div style={{width:52,height:52,borderRadius:'50%',background:`linear-gradient(135deg,${C.tlM},${C.p})`,display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 10px',boxShadow:`0 4px 16px ${C.tlM}66`}}>
+            <IcoBot c="#fff"/>
+          </div>
+          <div style={{fontSize:11,fontWeight:500,color:C.t1,marginBottom:4}}>ИИ-ассистент</div>
+          <div style={{fontSize:10,color:C.t3,lineHeight:1.4}}>Задайте вопрос о процессах ЕЦП ГД</div>
+        </div>
+        <div style={{width:'100%',display:'flex',flexDirection:'column',gap:6}}>
+          {quickQ.slice(0,2).map((q,i)=>(
+            <button key={i} onClick={()=>send(q)} style={{background:C.sf3,border:`1px solid ${C.ol}44`,borderRadius:999,padding:'7px 12px',fontSize:10,color:C.t2,fontWeight:500,cursor:'pointer',textAlign:'left',fontFamily:"'Roboto',sans-serif",transition:'all .14s'}}
+              onMouseEnter={e=>{e.currentTarget.style.background=C.pC;e.currentTarget.style.color=C.p;e.currentTarget.style.borderColor=C.p+'44'}}
+              onMouseLeave={e=>{e.currentTarget.style.background=C.sf3;e.currentTarget.style.color=C.t2;e.currentTarget.style.borderColor=`${C.ol}44`}}>
+              {q}
+            </button>
+          ))}
+        </div>
+      </div>
+    </W>
+  );
+
+  if(state==='idle'&&!med) return(
+    <W size={size} title="AI-ассистент" sub="Задайте вопрос ИИ" iconBg={C.tlC} icon={<IcoBot/>} acc="tl" noFoot>
+      <div style={{display:'flex',gap:16,alignItems:'flex-start'}}>
+        <div style={{width:48,height:48,borderRadius:'50%',background:`linear-gradient(135deg,${C.tlM},${C.p})`,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,boxShadow:`0 4px 16px ${C.tlM}66`}}>
+          <IcoBot c="#fff"/>
+        </div>
+        <div style={{flex:1}}>
+          <div style={{fontSize:12,color:C.t2,lineHeight:1.5,marginBottom:12}}>Привет! Я помогу найти информацию о процессах, задачах и регламентах ЕЦП ГД.</div>
+          <div style={{display:'grid',gridTemplateColumns:xl||wide?'repeat(2,1fr)':'1fr',gap:6}}>
+            {quickQ.map((q,i)=>(
+              <button key={i} onClick={()=>send(q)} style={{background:C.sf3,border:`1px solid ${C.ol}44`,borderRadius:10,padding:'9px 12px',fontSize:11,color:C.t2,fontWeight:500,cursor:'pointer',textAlign:'left',fontFamily:"'Roboto',sans-serif",transition:'all .14s'}}
+                onMouseEnter={e=>{e.currentTarget.style.background=C.pC;e.currentTarget.style.color=C.p;e.currentTarget.style.borderColor=C.p+'44'}}
+                onMouseLeave={e=>{e.currentTarget.style.background=C.sf3;e.currentTarget.style.color=C.t2;e.currentTarget.style.borderColor=`${C.ol}44`}}>
+                {q}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </W>
+  );
+
+  const chatH=size==='standard'?160:size==='wide'?180:size==='xl'?200:110;
+  return(
+    <W size={size} title="AI-ассистент" sub="ИИ ЕЦП ГД" iconBg={C.tlC} icon={<IcoBot/>} acc="tl" noFoot>
+      <div style={{display:'flex',flexDirection:'column',height:'100%'}}>
+        <div ref={msgsRef} style={{flex:1,overflow:'hidden',display:'flex',flexDirection:'column',gap:8,maxHeight:chatH,overflowY:'auto',paddingBottom:4,paddingRight:2}}>
+          {msgs.map((m,i)=>(
+            <div key={i} className={`cbubble c${m.role==='bot'?'bot':'user'}`}>{m.text}</div>
+          ))}
+          {typing&&(
+            <div className="cbubble cbot" style={{display:'inline-flex',gap:4,alignItems:'center',padding:'10px 14px'}}>
+              <span className="cdot"/>
+              <span className="cdot" style={{animationDelay:'.2s'}}/>
+              <span className="cdot" style={{animationDelay:'.4s'}}/>
+            </div>
+          )}
+        </div>
+        <div style={{display:'flex',gap:8,alignItems:'center',paddingTop:10,borderTop:`1px solid ${C.ol}30`,marginTop:8}}>
+          <input className="cinput" value={inp} onChange={e=>setInp(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')send(inp);}} placeholder="Задать вопрос..."/>
+          <button className="csend" onClick={()=>send(inp)}><IcoSend/></button>
+        </div>
+      </div>
+    </W>
+  );
+};
+
+/* ──────────────────────────────────────────────────────
+   CONFIG & DATA
+────────────────────────────────────────────────────── */
+const hiddenVariants={
+  w01:{default:[]},
+  w02:{bar:[],line:[],donut:[]},
+  w03:{default:['xl']},
+  w04:{default:['xl']},
+  w05:{default:['compact']},
+  w06:{list:['compact','medium'],kanban:['compact','medium'],gantt:['compact','medium']},
+  w07:{services:[],actions:['compact']},
+  w08:{tasks:[],opps:[]},
+  w09:{recent:[],pending:[],approval:[]},
+  w10:{active:['compact','medium'],archive:['compact','medium']},
+  w11:{default:[]},
+  w12:{default:[]},
+  w13:{default:['xl']},
+  w15:{default:[]},
+  w16:{search:[],dept:['compact','medium']},
+  w17:{idle:[],chat:[]}
+};
+
+const widgets=[
+  {id:'w01',title:'KPI-счётчики',cat:'analytics',Component:W01,states:[{key:'default',label:'Основное'}]},
+  {id:'w02',title:'Аналитический график',cat:'analytics',Component:W02,states:[{key:'bar',label:'Bar'},{key:'line',label:'Line'},{key:'donut',label:'Donut'}]},
+  {id:'w03',title:'Нарушения и просрочки',cat:'analytics',Component:W03,states:[{key:'default',label:'Основное'}]},
+  {id:'w04',title:'Воронка процесса',cat:'analytics',Component:W04,states:[{key:'default',label:'Основное'}]},
+  {id:'w05',title:'Топ-5 показателей',cat:'analytics',Component:W05,states:[{key:'default',label:'Единый виджет'}]},
+  {id:'w06',title:'Мои задачи',cat:'work',Component:W06,states:[{key:'list',label:'List'},{key:'kanban',label:'Kanban'},{key:'gantt',label:'Gantt'}]},
+  {id:'w07',title:'Быстрый доступ',cat:'work',Component:W07,states:[{key:'services',label:'Сервисы'},{key:'actions',label:'Действия'}]},
+  {id:'w08',title:'Избранное',cat:'work',Component:W08,states:[{key:'tasks',label:'Задачи'},{key:'opps',label:'Возможности'}]},
+  {id:'w09',title:'Мои документы',cat:'work',Component:W09,states:[{key:'recent',label:'Recent'},{key:'pending',label:'Pending'},{key:'approval',label:'Approval'}]},
+  {id:'w10',title:'Мои заявления',cat:'work',Component:W10,states:[{key:'active',label:'Активные'},{key:'archive',label:'Архив'}]},
+  {id:'w11',title:'Активность команды',cat:'work',Component:W11,states:[{key:'default',label:'Основное'}]},
+  {id:'w12',title:'Мой календарь',cat:'work',Component:W12,states:[{key:'default',label:'Основное'}]},
+  {id:'w13',title:'Новости',cat:'info',Component:W13,states:[{key:'default',label:'Основное'}]},
+  {id:'w15',title:'Нормативная база',cat:'info',Component:W15,states:[{key:'default',label:'Основное'}]},
+  {id:'w16',title:'Справочник сотрудников',cat:'info',Component:W16,states:[{key:'search',label:'Поиск'},{key:'dept',label:'Отдел'}]},
+  {id:'w17',title:'AI-ассистент',cat:'work',Component:W17,states:[{key:'idle',label:'Ожидание'},{key:'chat',label:'Диалог'}]}
+];
+const categories=[{id:'analytics',label:'Аналитика'},{id:'work',label:'Операционные'},{id:'info',label:'Информационные'}];
+
+/* ──────────────────────────────────────────────────────
+   SHOWCASE SHELL
+────────────────────────────────────────────────────── */
+const sizes=['compact','medium','standard','wide','xl'];
+const sizeNewLabel={medium:'NEW',wide:'NEW'};
+const sizePretty={compact:'Compact · 1×1',medium:'Medium · 1.5×1',standard:'Standard · 2×1',wide:'Wide · 3×1',xl:'XL · 4×2'};
+
+const Showcase=({widget})=>{
+  const sts=widget.states?.length?widget.states:[{key:'default',label:'Основное'}];
+  return(
+    <div className="fu">
+      <div className="sc-head">
+        <div className="sc-title">{widget.title}</div>
+        <div className="sc-meta">
+          <span>Material 3 · Roboto · ЕЦП ГД v6</span>
+          <span>•</span>
+          <span>{sts.length} состояний</span>
+          <span>•</span>
+          <span>5 размеров (2 новых)</span>
+        </div>
+      </div>
+      {sts.map(st=>{
+        const Comp=widget.Component;
+        const hidden=(hiddenVariants[widget.id]?.[st.key])||[];
+        const vis=sizes.filter(s=>!hidden.includes(s));
+        if(!vis.length) return null;
+        return(
+          <section className="size-sec" key={st.key}>
+            <div className="size-lbl">
+              {st.label}
+              {sts.length>1&&<span style={{fontWeight:400,textTransform:'none',fontSize:11,letterSpacing:0}}>{st.key}</span>}
+            </div>
+            <div className="variants">
+              {vis.map(sz=>(
+                <div key={sz} className={`vwrap ${sz==='xl'?'fullcol':''}`}>
+                  <div className="vlabel">
+                    {sizePretty[sz]}
+                    {sizeNewLabel[sz]&&<span className="new-pill">{sizeNewLabel[sz]}</span>}
+                  </div>
+                  <Comp size={sz} state={st.key}/>
+                </div>
+              ))}
+            </div>
+          </section>
+        );
+      })}
+    </div>
+  );
+};
+
+/* ──────────────────────────────────────────────────────
+   APP
+────────────────────────────────────────────────────── */
+const App=()=>{
+  const [cat,setCat]=useState('analytics');
+  const filtered=useMemo(()=>widgets.filter(w=>w.cat===cat),[cat]);
+  const [active,setActive]=useState(filtered[0]?.id||'w01');
+  useEffect(()=>{if(!filtered.find(w=>w.id===active)) setActive(filtered[0]?.id||'');},[cat,active,filtered]);
+  return(
+    <div className="app">
+      <div className="appbar">
+        <div className="logo-mark">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" strokeWidth="2">
+            <rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/>
+            <rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/>
+          </svg>
+        </div>
+        <div className="ab-title">ЕЦП ГД — Widget Library</div>
+        <div className="ab-badge">v6</div>
+        <div className="ab-right">
+          <span>16 виджетов</span>
+          <span style={{opacity:.4}}>·</span>
+          <span>5 размеров</span>
+          <span style={{opacity:.4}}>·</span>
+          <span>Material 3 · Roboto</span>
+        </div>
+      </div>
+      <div className="tabnav">
+        <div className="tabnav-inner">
+          {categories.map((c,idx)=>(
+            <React.Fragment key={c.id}>
+              {idx>0&&<div className="cat-sep">{c.label}</div>}
+              <button className={`tbtn ${cat===c.id?'on':''}`} onClick={()=>setCat(c.id)}>
+                {c.label}<span className="tnum">{widgets.filter(w=>w.cat===c.id).length}</span>
+              </button>
+            </React.Fragment>
+          ))}
+          <div className="cat-sep">Виджеты</div>
+          {filtered.map(w=>(
+            <button key={w.id} className={`tbtn ${active===w.id?'on':''}`}
+              onClick={()=>{setActive(w.id);document.getElementById(`sec-${w.id}`)?.scrollIntoView({behavior:'smooth',block:'start'});}}>
+              {w.title}<span className="tnum">{w.states?.length||1}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+      <main className="showcase">
+        {filtered.map(w=>(
+          <div key={w.id} id={`sec-${w.id}`} style={{scrollMarginTop:24}}>
+            <Showcase widget={w}/>
+          </div>
+        ))}
+      </main>
+    </div>
+  );
+};
+
+/* ── TESTS ── */
+function runTests(){
+  console.assert(Array.isArray(kpiData)&&kpiData.length===4,'kpiData should have 4 items');
+  console.assert(Array.isArray(top5Data.performers)&&top5Data.performers.length===5,'performers should have 5 rows');
+  console.assert(typeof W01==='function','W01 should be defined');
+  console.assert(typeof W02==='function','W02 should be defined');
+  console.assert(typeof W17==='function','W17 chatbot should be defined');
+  console.assert(widgets.length===16,'widgets length should be 16');
+  console.assert(widgets.find(w=>w.id==='w17'),'w17 chatbot should be in widgets array');
+  console.assert((hiddenVariants.w06?.list||[]).includes('compact'),'w06 list compact should stay hidden');
+  console.assert((hiddenVariants.w10?.active||[]).includes('compact'),'w10 active compact should stay hidden');
+  console.assert(Object.keys(widths).length===5,'should have 5 sizes');
+  console.assert(typeof getBotReply==='function','getBotReply should be defined');
+  console.log('✅ All v6 tests passed — 16 widgets, 5 sizes');
+}
+runTests();
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

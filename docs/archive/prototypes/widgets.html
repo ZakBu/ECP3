@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ЕЦП ГД 2.0 — Главная</title>
+<style>
+:root{
+  --bg:#F4F4F7;--surface:#fff;--surface2:#F8F8FA;
+  --border:#E2E2E7;--border2:#EBEBEF;
+  --t1:#1A1A1F;--t2:#6B6B72;--t3:#AEAEB5;
+  --blue:#185FA5;--blue-bg:#E6F1FB;--blue-mid:#378ADD;--blue-dark:#0C447C;
+  --green:#2E6010;--green-bg:#EAF3DE;--green-mid:#5A9020;--green-dark:#1E4208;
+  --amber:#7A4A08;--amber-bg:#FDF0DA;--amber-mid:#B87016;--amber-dark:#3E2202;
+  --red:#A02828;--red-bg:#FCE8E8;--red-mid:#D94444;
+  --purple:#5B2D8E;--purple-bg:#F0E8F8;
+  --r:10px;--rs:6px;--rx:20px;
+  --sh:0 1px 4px rgba(0,0,0,.06);--sh2:0 3px 14px rgba(0,0,0,.1);
+  --hdr:56px;--preset-bar:48px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-serif;background:var(--bg);color:var(--t1);font-size:13px;line-height:1.45;overflow-x:hidden}
+
+/* ── HEADER ─────────────────────────────── */
+.hdr{height:var(--hdr);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;position:sticky;top:0;z-index:200;box-shadow:var(--sh)}
+.hdr-logo{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.hdr-logo-mark{width:32px;height:32px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.hdr-logo-mark svg{width:18px;height:18px;fill:#fff}
+.hdr-brand{font-size:15px;font-weight:700;letter-spacing:-.3px;color:var(--t1)}
+.hdr-brand span{color:var(--blue)}
+.hdr-divider{width:1px;height:20px;background:var(--border);margin:0 4px}
+.hdr-subtitle{font-size:11px;color:var(--t3);font-weight:500}
+.hdr-search{flex:1;max-width:380px;margin:0 auto;position:relative}
+.hdr-search input{width:100%;height:32px;border:1px solid var(--border);border-radius:var(--rs);padding:0 12px 0 34px;font-size:12px;background:var(--surface2);color:var(--t1);outline:none;transition:.15s}
+.hdr-search input:focus{border-color:var(--blue-mid);background:#fff;box-shadow:0 0 0 3px rgba(55,138,221,.12)}
+.hdr-search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--t3);pointer-events:none}
+.hdr-actions{display:flex;align-items:center;gap:4px;margin-left:auto}
+.hdr-btn{width:32px;height:32px;border-radius:var(--rs);border:1px solid var(--border);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t2);transition:.15s;position:relative}
+.hdr-btn:hover{background:var(--surface2);border-color:var(--blue-mid)}
+.notif-badge{position:absolute;top:4px;right:4px;width:8px;height:8px;background:var(--red-mid);border-radius:50%;border:1.5px solid #fff}
+.hdr-avatar{width:32px;height:32px;border-radius:50%;background:var(--blue);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.hdr-user-info{font-size:11px;line-height:1.3}
+.hdr-user-name{font-weight:600;color:var(--t1)}
+.hdr-user-role{color:var(--t3)}
+
+/* ── PRESET BAR ─────────────────────────── */
+.preset-bar{height:var(--preset-bar);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:8px;position:sticky;top:var(--hdr);z-index:190}
+.preset-label{font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-right:4px;white-space:nowrap}
+.preset-pill{padding:5px 14px;border-radius:var(--rx);font-size:12px;font-weight:500;border:1px solid var(--border);background:var(--surface2);cursor:pointer;transition:.15s;white-space:nowrap;color:var(--t2)}
+.preset-pill:hover{border-color:var(--blue-mid);color:var(--blue)}
+.preset-pill.active{background:var(--blue);color:#fff;border-color:var(--blue);font-weight:600}
+.preset-sep{flex:1}
+.edit-btn{padding:5px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;border:1px solid var(--border);background:var(--surface2);cursor:pointer;display:flex;align-items:center;gap:6px;transition:.15s;color:var(--t2)}
+.edit-btn:hover{border-color:var(--blue-mid);color:var(--blue)}
+.edit-btn.active{background:var(--amber-bg);color:var(--amber);border-color:var(--amber-mid)}
+.add-btn{padding:5px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;border:none;background:var(--blue);color:#fff;cursor:pointer;display:flex;align-items:center;gap:6px;transition:.15s}
+.add-btn:hover{background:var(--blue-dark)}
+
+/* ── DASHBOARD GRID ─────────────────────── */
+.dashboard{padding:20px 24px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;min-height:calc(100vh - var(--hdr) - var(--preset-bar))}
+.w1{grid-column:span 1}
+.w2{grid-column:span 2}
+.w4{grid-column:span 4}
+
+/* ── WIDGET BASE ────────────────────────── */
+.widget{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;transition:border-color .15s,box-shadow .15s,transform .15s;position:relative;display:flex;flex-direction:column}
+.widget:hover{border-color:#C8C8D0}
+.widget.edit-mode{cursor:grab;animation:jiggle .2s ease infinite alternate}
+.widget.edit-mode:hover{box-shadow:var(--sh2);border-color:var(--blue-mid);transform:scale(1.01)}
+@keyframes jiggle{from{transform:rotate(-.4deg)}to{transform:rotate(.4deg)}}
+.drag-handle{display:none;position:absolute;top:6px;right:6px;width:20px;height:20px;border-radius:4px;background:var(--surface2);border:1px solid var(--border);cursor:grab;align-items:center;justify-content:center;z-index:10}
+.edit-mode .drag-handle{display:flex}
+
+.w-head{padding:12px 14px 8px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border2);flex-shrink:0}
+.w-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.w-icon.blue{background:var(--blue-bg)} .w-icon.green{background:var(--green-bg)} .w-icon.amber{background:var(--amber-bg)} .w-icon.red{background:var(--red-bg)} .w-icon.purple{background:var(--purple-bg)}
+.w-icon svg{width:16px;height:16px}
+.w-icon.blue svg{color:var(--blue)} .w-icon.green svg{color:var(--green)} .w-icon.amber svg{color:var(--amber)} .w-icon.red svg{color:var(--red)} .w-icon.purple svg{color:var(--purple)}
+.w-title{font-size:12px;font-weight:700;color:var(--t1);flex:1}
+.w-subtitle{font-size:10px;color:var(--t3);margin-top:1px}
+.w-meta{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.w-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px}
+.w-badge.red{background:var(--red-bg);color:var(--red)} .w-badge.blue{background:var(--blue-bg);color:var(--blue)} .w-badge.green{background:var(--green-bg);color:var(--green)} .w-badge.amber{background:var(--amber-bg);color:var(--amber)}
+.w-more{width:24px;height:24px;border-radius:4px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t3);transition:.1s}
+.w-more:hover{background:var(--surface2);color:var(--t2)}
+.w-body{padding:12px 14px;flex:1;overflow:hidden}
+.w-footer{padding:6px 14px 10px;border-top:1px solid var(--border2);display:flex;align-items:center;gap:8px}
+.w-link{font-size:11px;color:var(--blue);cursor:pointer;text-decoration:none;transition:.1s}
+.w-link:hover{text-decoration:underline}
+
+/* ── WIDGET TABS ────────────────────────── */
+.w-tabs{display:flex;gap:2px;background:var(--surface2);border-radius:var(--rs);padding:2px;margin-bottom:10px}
+.w-tab{flex:1;padding:4px 8px;border-radius:4px;font-size:10px;font-weight:600;cursor:pointer;text-align:center;color:var(--t3);transition:.15s;border:none;background:transparent}
+.w-tab.active{background:var(--surface);color:var(--t1);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.w-tab:hover:not(.active){color:var(--t2)}
+
+/* ── KPI GRID ───────────────────────────── */
+.kpi-grid{display:grid;gap:8px}
+.kpi-grid.cols2{grid-template-columns:1fr 1fr}
+.kpi-grid.cols4{grid-template-columns:repeat(4,1fr)}
+.kpi-card{background:var(--surface2);border-radius:var(--rs);padding:10px 12px;border:1px solid var(--border2)}
+.kpi-label{font-size:10px;color:var(--t3);margin-bottom:4px}
+.kpi-num{font-size:26px;font-weight:800;line-height:1;letter-spacing:-1px}
+.kpi-num.blue{color:var(--blue)} .kpi-num.green{color:var(--green)} .kpi-num.red{color:var(--red)} .kpi-num.amber{color:var(--amber)}
+.kpi-trend{display:flex;align-items:center;gap:4px;margin-top:5px;font-size:10px}
+.kpi-trend.up{color:var(--green-mid)} .kpi-trend.down{color:var(--red-mid)}
+.kpi-bar{height:4px;background:var(--border2);border-radius:2px;margin-top:6px;overflow:hidden}
+.kpi-bar-fill{height:100%;border-radius:2px;transition:width .4s ease}
+
+/* ── CHARTS ─────────────────────────────── */
+.chart-wrap{width:100%;overflow:hidden;position:relative}
+.chart-legend{display:flex;gap:12px;font-size:10px;color:var(--t2);margin-bottom:8px;flex-wrap:wrap}
+.chart-legend-item{display:flex;align-items:center;gap:4px}
+.chart-legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* ── VIOLATIONS ─────────────────────────── */
+.viol-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border2)}
+.viol-row:last-child{border-bottom:none}
+.viol-label{flex:1;font-size:11px;color:var(--t1)}
+.viol-count{font-size:13px;font-weight:700;width:28px;text-align:right;flex-shrink:0}
+.viol-bar{flex:0 0 80px;height:5px;background:var(--border2);border-radius:3px;overflow:hidden}
+.viol-fill{height:100%;border-radius:3px}
+
+/* ── FUNNEL ─────────────────────────────── */
+.funnel-stage{margin-bottom:6px}
+.funnel-stage-label{display:flex;justify-content:space-between;font-size:10px;color:var(--t2);margin-bottom:3px}
+.funnel-stage-bar{height:18px;border-radius:3px;display:flex;align-items:center;padding-left:8px;font-size:10px;font-weight:700;color:#fff;transition:width .4s}
+
+/* ── TOP-5 ──────────────────────────────── */
+.top-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border2)}
+.top-row:last-child{border-bottom:none}
+.top-rank{font-size:11px;font-weight:700;color:var(--t3);width:16px;flex-shrink:0}
+.top-rank.gold{color:#B8860B} .top-rank.silver{color:#888} .top-rank.bronze{color:#A0522D}
+.top-avatar{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0}
+.top-name{flex:1;font-size:11px;font-weight:500}
+.top-dept{font-size:9px;color:var(--t3)}
+.top-val{font-size:12px;font-weight:700;color:var(--blue);flex-shrink:0}
+.top-bar-mini{width:60px;height:4px;background:var(--border2);border-radius:2px;overflow:hidden;flex-shrink:0}
+
+/* ── TASKS TABLE ────────────────────────── */
+.tasks-table{width:100%;border-collapse:collapse;font-size:11px}
+.tasks-table th{text-align:left;padding:5px 8px;border-bottom:2px solid var(--border);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--t3);white-space:nowrap}
+.tasks-table td{padding:6px 8px;border-bottom:1px solid var(--border2);vertical-align:middle}
+.tasks-table tr:last-child td{border-bottom:none}
+.tasks-table tr:hover td{background:var(--surface2)}
+.task-priority{width:4px;height:24px;border-radius:2px;display:inline-block}
+.status-pill{font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap}
+.status-new{background:var(--blue-bg);color:var(--blue)} .status-inprog{background:var(--green-bg);color:var(--green)} .status-overdue{background:var(--red-bg);color:var(--red)} .status-review{background:var(--amber-bg);color:var(--amber)} .status-done{background:var(--border2);color:var(--t3)}
+.deadline{font-size:10px;color:var(--t2)} .deadline.overdue{color:var(--red);font-weight:600}
+
+/* ── KANBAN ─────────────────────────────── */
+.kanban-board{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;height:220px;overflow:hidden}
+.kanban-col{background:var(--surface2);border-radius:var(--rs);padding:8px;display:flex;flex-direction:column;border:1px solid var(--border2)}
+.kanban-col-header{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--t3);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between}
+.kanban-col-count{background:var(--surface);border-radius:8px;padding:1px 6px;font-size:9px;font-weight:700}
+.k-card{background:var(--surface);border:1px solid var(--border2);border-radius:6px;padding:7px 8px;margin-bottom:5px;cursor:grab;transition:.15s}
+.k-card:hover{box-shadow:var(--sh);border-color:var(--blue-mid)}
+.k-card-title{font-size:10px;font-weight:600;color:var(--t1);margin-bottom:4px;line-height:1.3}
+.k-card-meta{display:flex;align-items:center;gap:4px}
+.k-card-due{font-size:9px;color:var(--t3)}
+.k-card-due.late{color:var(--red)}
+
+/* ── QUICK ACCESS ───────────────────────── */
+.svc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.svc-tile{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--rs);padding:10px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:.15s;text-align:center}
+.svc-tile:hover{background:var(--blue-bg);border-color:var(--blue-mid)}
+.svc-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;flex-shrink:0}
+.svc-name{font-size:9px;font-weight:600;color:var(--t2);line-height:1.3}
+
+/* ── CALENDAR ───────────────────────────── */
+.cal-week{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:8px;text-align:center}
+.cal-day-label{font-size:9px;font-weight:600;color:var(--t3);padding:2px 0;text-transform:uppercase}
+.cal-day{font-size:10px;padding:4px 2px;border-radius:4px;cursor:pointer;transition:.1s;font-weight:500;color:var(--t2);text-align:center}
+.cal-day:hover{background:var(--surface2)}
+.cal-day.today{background:var(--blue);color:#fff;font-weight:700}
+.cal-day.has-event{position:relative}
+.cal-day.has-event::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--blue-mid)}
+.cal-day.today.has-event::after{background:rgba(255,255,255,.8)}
+.cal-events{display:flex;flex-direction:column;gap:4px}
+.cal-event-item{display:flex;align-items:flex-start;gap:6px;padding:5px 0;border-bottom:1px solid var(--border2)}
+.cal-event-item:last-child{border-bottom:none}
+.cal-event-bar{width:3px;height:30px;border-radius:2px;flex-shrink:0;margin-top:2px}
+.cal-event-time{font-size:9px;font-weight:600;color:var(--t3);width:32px;flex-shrink:0;margin-top:2px}
+.cal-event-title{font-size:10px;font-weight:600;color:var(--t1);line-height:1.3}
+.cal-event-loc{font-size:9px;color:var(--t3);margin-top:1px}
+
+/* ── NEWS ───────────────────────────────── */
+.news-item{padding:8px 0;border-bottom:1px solid var(--border2)}
+.news-item:last-child{border-bottom:none}
+.news-tag{display:inline-block;font-size:8px;font-weight:700;padding:2px 7px;border-radius:3px;text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px}
+.news-title{font-size:11px;font-weight:600;color:var(--t1);line-height:1.4;margin-bottom:2px}
+.news-date{font-size:9px;color:var(--t3)}
+
+/* ── NOTIFICATIONS ──────────────────────── */
+.notif-item{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid var(--border2)}
+.notif-item:last-child{border-bottom:none}
+.notif-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.notif-text{font-size:11px;color:var(--t1);flex:1;line-height:1.4}
+.notif-time{font-size:9px;color:var(--t3);flex-shrink:0;margin-top:1px}
+.notif-item.unread .notif-text{font-weight:600}
+
+/* ── ACTIVITY ───────────────────────────── */
+.act-item{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border2)}
+.act-item:last-child{border-bottom:none}
+.act-avatar{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0}
+.act-text{font-size:11px;color:var(--t2);flex:1;line-height:1.4}
+.act-text strong{color:var(--t1)}
+.act-time{font-size:9px;color:var(--t3);flex-shrink:0}
+
+/* ── DOCUMENTS/APPLICATIONS TABLE ──────── */
+.doc-table{width:100%;border-collapse:collapse;font-size:11px}
+.doc-table th{text-align:left;padding:5px 8px;border-bottom:2px solid var(--border);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--t3);white-space:nowrap}
+.doc-table td{padding:6px 8px;border-bottom:1px solid var(--border2);vertical-align:middle}
+.doc-table tr:last-child td{border-bottom:none}
+.doc-table tr:hover td{background:var(--surface2)}
+.doc-icon{width:22px;height:26px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;flex-shrink:0}
+.doc-icon.pdf{background:var(--red-mid)} .doc-icon.docx{background:var(--blue)} .doc-icon.xlsx{background:var(--green)} .doc-icon.pptx{background:var(--amber-mid)}
+.btn-action{font-size:9px;font-weight:700;padding:3px 10px;border-radius:4px;cursor:pointer;border:none;white-space:nowrap}
+.btn-sign{background:var(--blue-bg);color:var(--blue)} .btn-approve{background:var(--green-bg);color:var(--green)} .btn-reject{background:var(--red-bg);color:var(--red)} .btn-view{background:var(--surface2);color:var(--t2)}
+
+/* ── PROGRESS SLA ───────────────────────── */
+.sla-row{display:flex;align-items:center;gap:8px;padding:5px 0}
+.sla-label{font-size:10px;color:var(--t2);flex:1}
+.sla-bar-wrap{flex:0 0 100px}
+.sla-bar{height:6px;background:var(--border2);border-radius:3px;overflow:hidden}
+.sla-fill{height:100%;border-radius:3px}
+.sla-pct{font-size:10px;font-weight:700;width:28px;text-align:right;flex-shrink:0}
+
+/* ── REGULATORY TREE ────────────────────── */
+.tree-item{padding:4px 0;border-bottom:1px solid var(--border2)}
+.tree-item:last-child{border-bottom:none}
+.tree-row{display:flex;align-items:center;gap:6px;cursor:pointer;padding:2px 0}
+.tree-toggle{width:14px;height:14px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--t3);flex-shrink:0}
+.tree-icon-file{width:12px;height:14px;flex-shrink:0}
+.tree-label{font-size:10px;color:var(--t1);flex:1}
+.tree-label.section{font-weight:600;font-size:11px}
+.tree-count{font-size:9px;color:var(--t3);background:var(--surface2);padding:1px 6px;border-radius:8px}
+.tree-sub{padding-left:20px}
+
+/* ── DIRECTORY ──────────────────────────── */
+.dir-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border2)}
+.dir-row:last-child{border-bottom:none}
+.dir-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
+.dir-info{flex:1}
+.dir-name{font-size:11px;font-weight:600}
+.dir-pos{font-size:9px;color:var(--t3)}
+.dir-dept{font-size:9px;color:var(--blue);background:var(--blue-bg);padding:2px 7px;border-radius:10px;white-space:nowrap}
+.dir-status{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dir-status.online{background:#3DC47E} .dir-status.away{background:#F0A830} .dir-status.offline{background:var(--border)}
+
+/* ── SKELETON ───────────────────────────── */
+.skeleton{background:linear-gradient(90deg,var(--border2) 25%,var(--surface2) 50%,var(--border2) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:4px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ── MISC ───────────────────────────────── */
+.chip{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;display:inline-block}
+.chip.blue{background:var(--blue-bg);color:var(--blue)} .chip.green{background:var(--green-bg);color:var(--green)} .chip.amber{background:var(--amber-bg);color:var(--amber)} .chip.red{background:var(--red-bg);color:var(--red)} .chip.gray{background:var(--surface2);color:var(--t3)}
+.search-bar{display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:5px 10px;margin-bottom:8px}
+.search-bar input{flex:1;border:none;background:transparent;font-size:11px;color:var(--t1);outline:none}
+.search-bar input::placeholder{color:var(--t3)}
+.empty-state{text-align:center;padding:24px 0;color:var(--t3)}
+.empty-state svg{margin-bottom:8px;opacity:.3}
+.empty-state p{font-size:11px}
+.gantt-row{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--border2)}
+.gantt-label{font-size:10px;color:var(--t2);width:100px;flex-shrink:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.gantt-track{flex:1;height:14px;background:var(--border2);border-radius:3px;position:relative;overflow:hidden}
+.gantt-bar{height:100%;border-radius:3px;position:absolute;top:0}
+
+/* ── FAVORITES ──────────────────────────── */
+.fav-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border2)}
+.fav-item:last-child{border-bottom:none}
+.fav-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.fav-title{font-size:11px;font-weight:600;color:var(--t1)}
+.fav-meta{font-size:9px;color:var(--t3)}
+.fav-star{color:var(--amber-mid);font-size:12px;flex-shrink:0}
+
+/* ── RESPONSIVE ─────────────────────────── */
+@media(max-width:1200px){.dashboard{grid-template-columns:repeat(3,1fr)}.w4{grid-column:span 3}}
+@media(max-width:900px){.dashboard{grid-template-columns:repeat(2,1fr)}.w2,.w4{grid-column:span 2}.hdr-search{display:none}}
+@media(max-width:600px){.dashboard{grid-template-columns:1fr}.w1,.w2,.w4{grid-column:span 1}}
+
+/* preset transitions */
+.dashboard .widget{transition:opacity .2s ease,transform .2s ease}
+.dashboard.switching .widget{opacity:0;transform:translateY(4px)}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HEADER ═══════════════ -->
+<header class="hdr">
+  <div class="hdr-logo">
+    <div class="hdr-logo-mark">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h11v2H3z"/></svg>
+    </div>
+    <div>
+      <div class="hdr-brand">ЕЦП <span>ГД</span></div>
+    </div>
+  </div>
+  <div class="hdr-divider"></div>
+  <div class="hdr-subtitle">Единый цифровой портал градостроительной деятельности</div>
+
+  <div class="hdr-search">
+    <svg class="hdr-search-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" placeholder="Поиск задач, документов, сотрудников...">
+  </div>
+
+  <div class="hdr-actions">
+    <button class="hdr-btn" title="Помощь">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+    </button>
+    <button class="hdr-btn" title="Уведомления">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <div class="notif-badge"></div>
+    </button>
+    <div style="width:1px;height:20px;background:var(--border);margin:0 4px"></div>
+    <div class="hdr-avatar">ИВ</div>
+    <div class="hdr-user-info">
+      <div class="hdr-user-name">Иванов И.В.</div>
+      <div class="hdr-user-role">Начальник отдела</div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════ PRESET BAR ═══════════ -->
+<div class="preset-bar">
+  <span class="preset-label">Пресет:</span>
+  <button class="preset-pill active" onclick="setPreset('overview',this)">Обзор</button>
+  <button class="preset-pill" onclick="setPreset('tasks',this)">Задачи</button>
+  <button class="preset-pill" onclick="setPreset('analytics',this)">Аналитика</button>
+  <button class="preset-pill" onclick="setPreset('documents',this)">Документы</button>
+  <div class="preset-sep"></div>
+  <button class="edit-btn" id="editBtn" onclick="toggleEdit()">
+    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    Настроить
+  </button>
+  <button class="add-btn" onclick="alert('Открыть галерею виджетов')">
+    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Добавить виджет
+  </button>
+</div>
+
+<!-- ═══════════════ DASHBOARD ═══════════ -->
+<div class="dashboard" id="dashboard">
+  <!-- Widgets injected by JS -->
+</div>
+
+<script>
+// ════════════════════════════════════════════
+//  ICONS
+// ════════════════════════════════════════════
+const icons = {
+  bar: `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="12" width="4" height="8" rx="1"/><rect x="10" y="7" width="4" height="13" rx="1"/><rect x="17" y="3" width="4" height="17" rx="1"/></svg>`,
+  task: `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>`,
+  doc: `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>`,
+  bell: `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>`,
+  cal: `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+  news: `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a4 4 0 01-4-4V6"/><path d="M8 6h8M8 10h8M8 14h4"/></svg>`,
+  users: `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>`,
+  alert: `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+  funnel: `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"/></svg>`,
+  star: `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>`,
+  lightning: `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/></svg>`,
+  book: `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>`,
+  form: `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>`,
+  chart: `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>`,
+  more: `<svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>`,
+  drag: `<svg width="10" height="12" fill="currentColor" viewBox="0 0 10 12"><circle cx="2" cy="2" r="1.2"/><circle cx="8" cy="2" r="1.2"/><circle cx="2" cy="6" r="1.2"/><circle cx="8" cy="6" r="1.2"/><circle cx="2" cy="10" r="1.2"/><circle cx="8" cy="10" r="1.2"/></svg>`,
+};
+
+// ════════════════════════════════════════════
+//  WIDGET HEAD helper
+// ════════════════════════════════════════════
+function wHead(iconColor, iconSvg, title, subtitle='', badgeHtml=''){
+  return `<div class="w-head">
+    <div class="w-icon ${iconColor}">${iconSvg}</div>
+    <div style="flex:1;min-width:0">
+      <div class="w-title">${title}</div>
+      ${subtitle ? `<div class="w-subtitle">${subtitle}</div>` : ''}
+    </div>
+    <div class="w-meta">${badgeHtml}</div>
+    <button class="w-more">${icons.more}</button>
+    <div class="drag-handle" title="Переместить">${icons.drag}</div>
+  </div>`;
+}
+
+// ════════════════════════════════════════════
+//  SVG CHARTS
+// ════════════════════════════════════════════
+function barChart(data, colors, labels, h=80){
+  const max = Math.max(...data);
+  const bars = data.map((v,i) => {
+    const x = 10 + i * (300/data.length);
+    const bh = (v/max) * (h-20);
+    const y = h - bh - 2;
+    const w = Math.max(8, 280/data.length - 4);
+    const lbl = labels ? `<text x="${x+w/2}" y="${h+2}" text-anchor="middle" font-size="8" fill="#AEAEB5">${labels[i]||''}</text>` : '';
+    return `<rect x="${x}" y="${y}" width="${w}" height="${bh}" rx="2" fill="${colors[i%colors.length]}" opacity=".85"/>
+    <text x="${x+w/2}" y="${y-2}" text-anchor="middle" font-size="7" fill="#6B6B72">${v}</text>${lbl}`;
+  }).join('');
+  return `<svg width="100%" height="${h+12}" viewBox="0 0 320 ${h+12}" preserveAspectRatio="xMidYMid meet">${bars}</svg>`;
+}
+
+function lineChart(datasets, w=320, h=80){
+  return `<svg width="100%" height="${h}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+    ${datasets.map(({pts, color, fill}) => {
+      const points = pts.map((p,i) => `${10+i*(w-20)/(pts.length-1)},${h-10-p*(h-20)/100}`).join(' ');
+      const areaPoints = `10,${h-10} ` + pts.map((p,i) => `${10+i*(w-20)/(pts.length-1)},${h-10-p*(h-20)/100}`).join(' ') + ` ${w-10},${h-10}`;
+      return `${fill ? `<polygon points="${areaPoints}" fill="${color}" opacity=".12"/>` : ''}
+      <polyline points="${points}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round"/>`;
+    }).join('')}
+  </svg>`;
+}
+
+function donutChart(pct, color, r=28, size=64){
+  const circ = 2*Math.PI*r;
+  const dash = circ * pct / 100;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+    <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="#E2E2E7" stroke-width="8"/>
+    <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${color}" stroke-width="8"
+      stroke-dasharray="${dash} ${circ}" stroke-dashoffset="${-circ/4}" stroke-linecap="round"/>
+    <text x="${size/2}" y="${size/2+4}" text-anchor="middle" font-size="13" font-weight="800" fill="${color}">${pct}%</text>
+  </svg>`;
+}
+
+// ════════════════════════════════════════════
+//  WIDGET FACTORIES
+// ════════════════════════════════════════════
+
+function widgetKPI(cols=2){
+  const items = [
+    {label:'Новые',val:'4',color:'blue',trend:'+2',dir:'up',pct:20},
+    {label:'В работе',val:'12',color:'green',trend:'+1',dir:'up',pct:60},
+    {label:'Просрочено',val:'3',color:'red',trend:'-1',dir:'down',pct:15},
+    {label:'Согласование',val:'2',color:'amber',trend:'0',dir:'',pct:10},
+  ];
+  const displayed = cols===1 ? items.slice(0,2) : items;
+  return `<div class="widget w${cols==='xl'?4:cols}" id="w-kpi">
+    ${wHead('blue', icons.bar, 'KPI-счётчики', 'Обновлено 5 мин назад', '<span class="w-badge blue">Live</span>')}
+    <div class="w-body">
+      <div class="kpi-grid cols${cols==='xl'?4:2}" style="${cols==='xl'?'':''}">
+        ${displayed.map(k=>`<div class="kpi-card">
+          <div class="kpi-label">${k.label}</div>
+          <div class="kpi-num ${k.color}">${k.val}</div>
+          ${k.dir ? `<div class="kpi-trend ${k.dir}">
+            <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <polyline points="${k.dir==='up'?'18,15 12,9 6,15':'6,9 12,15 18,9'}"/>
+            </svg>${k.trend} от прошлой недели
+          </div>` : '<div class="kpi-trend" style="color:var(--t3)">без изменений</div>'}
+          <div class="kpi-bar"><div class="kpi-bar-fill" style="width:${k.pct}%;background:var(--${k.color==='blue'?'blue-mid':k.color==='green'?'green-mid':k.color==='red'?'red-mid':'amber-mid'})"></div></div>
+        </div>`).join('')}
+      </div>
+    </div>
+    <div class="w-footer"><a class="w-link">Все задачи →</a></div>
+  </div>`;
+}
+
+function widgetChart(size='w2'){
+  const barData = [14,22,18,30,25,20,27];
+  const labels = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+  const colors = Array(7).fill('#378ADD');
+  return `<div class="widget ${size}" id="w-chart">
+    ${wHead('blue', icons.chart, 'Аналитический график', 'Задачи за 7 дней', '')}
+    <div class="w-body" id="chartBody-${size}">
+      <div class="w-tabs">
+        <button class="w-tab active" onclick="switchChartTab(this,'bar-${size}')">Бар</button>
+        <button class="w-tab" onclick="switchChartTab(this,'line-${size}')">Линия</button>
+        <button class="w-tab" onclick="switchChartTab(this,'donut-${size}')">Пончик</button>
+        <button class="w-tab" onclick="switchChartTab(this,'heat-${size}')">Тепловая</button>
+      </div>
+      <div id="chart-bar-${size}" class="chart-content">
+        ${barChart(barData, colors, labels, size==='w4'?120:80)}
+      </div>
+      <div id="chart-line-${size}" class="chart-content" style="display:none">
+        <div class="chart-legend">
+          <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#378ADD"></div>Открыто</div>
+          <div class="chart-legend-item"><div class="chart-legend-dot" style="background:#5A9020"></div>Закрыто</div>
+        </div>
+        ${lineChart([{pts:[60,45,70,50,80,55,75],color:'#378ADD',fill:true},{pts:[40,50,35,60,45,65,50],color:'#5A9020',fill:true}])}
+      </div>
+      <div id="chart-donut-${size}" class="chart-content" style="display:none;display:none">
+        <div style="display:flex;align-items:center;gap:16px">
+          ${donutChart(62,'#5A9020',size==='w4'?34:26,size==='w4'?76:60)}
+          <div style="font-size:11px;line-height:2">
+            <div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#5A9020;margin-right:4px"></span>Выполнено — 62%</div>
+            <div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#D94444;margin-right:4px"></span>Просрочено — 18%</div>
+            <div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#B87016;margin-right:4px"></span>В работе — 20%</div>
+          </div>
+        </div>
+      </div>
+      <div id="chart-heat-${size}" class="chart-content" style="display:none">
+        ${heatmapSVG()}
+      </div>
+    </div>
+  </div>`;
+}
+
+function heatmapSVG(){
+  const days=['Пн','Вт','Ср','Чт','Пт'];
+  const hours=9;
+  let svg=`<div style="font-size:9px;color:var(--t3);margin-bottom:4px">Активность (нед × час)</div>`;
+  days.forEach((d,di)=>{
+    svg+=`<div style="display:flex;align-items:center;gap:2px;margin-bottom:2px">
+      <span style="font-size:8px;width:14px;color:var(--t3)">${d}</span>`;
+    for(let h=0;h<hours;h++){
+      const o=(Math.sin(di*1.3+h*.8)+1)/2;
+      svg+=`<div style="width:14px;height:14px;border-radius:2px;background:rgba(55,138,221,${(o*.8+.1).toFixed(2)})"></div>`;
+    }
+    svg+=`</div>`;
+  });
+  return svg;
+}
+
+function switchChartTab(btn, id){
+  const body = btn.closest('.w-body');
+  body.querySelectorAll('.w-tab').forEach(t=>t.classList.remove('active'));
+  body.querySelectorAll('.chart-content').forEach(c=>c.style.display='none');
+  btn.classList.add('active');
+  const el = document.getElementById('chart-'+id);
+  if(el) el.style.display='block';
+}
+
+function widgetViolations(size='w2'){
+  const rows=[
+    {label:'Просрочено > 7 дней',count:3,pct:60,color:'#D94444'},
+    {label:'SLA под угрозой',count:5,pct:100,color:'#B87016'},
+    {label:'Ожидают согласования',count:8,pct:80,color:'#185FA5'},
+    {label:'Возвращено на доработку',count:2,pct:40,color:'#5A9020'},
+  ];
+  return `<div class="widget ${size}" id="w-violations">
+    ${wHead('red', icons.alert, 'Нарушения и просрочки', 'По активным задачам', '<span class="w-badge red">8 критич.</span>')}
+    <div class="w-body">
+      ${rows.map(r=>`<div class="viol-row">
+        <div class="viol-label">${r.label}</div>
+        <div class="viol-bar"><div class="viol-fill" style="width:${r.pct}%;background:${r.color}"></div></div>
+        <div class="viol-count" style="color:${r.color}">${r.count}</div>
+      </div>`).join('')}
+    </div>
+    <div class="w-footer">
+      <a class="w-link">Перейти к нарушениям →</a>
+      <div style="margin-left:auto;font-size:10px;color:var(--t3)">Обновлено: 10:45</div>
+    </div>
+  </div>`;
+}
+
+function widgetFunnel(size='w2'){
+  const stages=[
+    {label:'Инициация',count:120,pct:100,color:'#378ADD'},
+    {label:'Согласование',count:87,pct:72,color:'#185FA5'},
+    {label:'Экспертиза',count:54,pct:45,color:'#5A9020'},
+    {label:'Утверждение',count:32,pct:27,color:'#2E6010'},
+    {label:'Выдача',count:18,pct:15,color:'#B87016'},
+  ];
+  return `<div class="widget ${size}" id="w-funnel">
+    ${wHead('blue', icons.funnel, 'Воронка процесса', 'Согласование ГПЗУ', '')}
+    <div class="w-body">
+      ${stages.map(s=>`<div class="funnel-stage">
+        <div class="funnel-stage-label"><span>${s.label}</span><span style="font-weight:700">${s.count}</span></div>
+        <div style="background:var(--border2);border-radius:3px;overflow:hidden;height:18px">
+          <div class="funnel-stage-bar" style="width:${s.pct}%;background:${s.color}">${s.pct}%</div>
+        </div>
+      </div>`).join('')}
+    </div>
+    <div class="w-footer"><a class="w-link">Подробный отчёт →</a></div>
+  </div>`;
+}
+
+function widgetTop5(size='w1'){
+  const items=[
+    {name:'Смирнов А.В.',dept:'ОГА',val:42,bg:'#185FA5'},
+    {name:'Козлова Н.С.',dept:'ОТП',val:38,bg:'#5A9020'},
+    {name:'Попов Д.Р.',dept:'ОКС',val:35,bg:'#B87016'},
+    {name:'Лебедев М.О.',dept:'ОГА',val:31,bg:'#8B5CF6'},
+    {name:'Новикова Е.В.',dept:'ОТП',val:28,bg:'#D94444'},
+  ];
+  const rankColors=['gold','silver','bronze','',''];
+  return `<div class="widget ${size}" id="w-top5">
+    ${wHead('green', icons.users, 'Топ-5 исполнителей', 'По закрытым задачам', '')}
+    <div class="w-body">
+      ${items.map((it,i)=>`<div class="top-row">
+        <div class="top-rank ${rankColors[i]}">${i+1}</div>
+        <div class="top-avatar" style="background:${it.bg}">${it.name.split(' ').map(n=>n[0]).join('').slice(0,2)}</div>
+        <div style="flex:1;min-width:0">
+          <div class="top-name">${it.name}</div>
+          <div class="top-dept">${it.dept}</div>
+        </div>
+        <div class="top-bar-mini"><div style="height:100%;border-radius:2px;background:${it.bg};width:${(it.val/42)*100}%"></div></div>
+        <div class="top-val">${it.val}</div>
+      </div>`).join('')}
+    </div>
+    <div class="w-footer"><a class="w-link">Все сотрудники →</a></div>
+  </div>`;
+}
+
+function widgetTasks(size='w4', mode='list'){
+  const tasks=[
+    {id:'ЗД-1024',title:'Согласование ГПЗУ ул. Ленина 45',status:'overdue',statusLabel:'Просрочено',priority:'#D94444',deadline:'28.03.2026',dept:'ОГА',assignee:'СА'},
+    {id:'ЗД-1031',title:'Проверка документов ПМТ на ул. Садовая',status:'inprog',statusLabel:'В работе',priority:'#B87016',deadline:'02.04.2026',dept:'ОТП',assignee:'КН'},
+    {id:'ЗД-1035',title:'Подготовка заключения по объекту №338',status:'new',statusLabel:'Новая',priority:'#378ADD',deadline:'05.04.2026',dept:'ОКС',assignee:'ПД'},
+    {id:'ЗД-1038',title:'Ответ на запрос Мосгорпроекта',status:'review',statusLabel:'На проверке',priority:'#B87016',deadline:'03.04.2026',dept:'ОГА',assignee:'ЛМ'},
+    {id:'ЗД-1041',title:'Формирование реестра объектов ИЖС',status:'new',statusLabel:'Новая',priority:'#378ADD',deadline:'07.04.2026',dept:'ОТП',assignee:'НЕ'},
+    {id:'ЗД-1043',title:'Обновление сведений об охранных зонах',status:'done',statusLabel:'Готово',priority:'#5A9020',deadline:'31.03.2026',dept:'ОКС',assignee:'СА'},
+  ];
+  if(mode==='kanban') return widgetTasksKanban(size);
+  if(mode==='gantt') return widgetTasksGantt(size);
+
+  return `<div class="widget ${size}" id="w-tasks">
+    ${wHead('green', icons.task, 'Мои задачи', '6 задач', '<span class="w-badge red">3 срочных</span>')}
+    <div class="w-body" style="padding:8px 14px">
+      <div style="display:flex;gap:6px;align-items:center;margin-bottom:8px">
+        <div class="w-tabs" style="flex:1;margin-bottom:0">
+          <button class="w-tab active" onclick="switchTasksTab(this,'list')">Список</button>
+          <button class="w-tab" onclick="switchTasksTab(this,'kanban')">Канбан</button>
+          <button class="w-tab" onclick="switchTasksTab(this,'gantt')">Гантт</button>
+        </div>
+        <div class="search-bar" style="margin-bottom:0;width:180px">
+          <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input placeholder="Поиск задачи...">
+        </div>
+      </div>
+      <div id="tasks-content">
+        <table class="tasks-table">
+          <thead><tr>
+            <th style="width:4px"></th><th>ID</th><th style="min-width:200px">Задача</th>
+            <th>Статус</th><th>Срок</th><th>Отдел</th><th>Исполнитель</th><th></th>
+          </tr></thead>
+          <tbody>
+            ${tasks.map(t=>`<tr>
+              <td><div class="task-priority" style="background:${t.priority}"></div></td>
+              <td style="font-size:10px;color:var(--blue);font-weight:600;white-space:nowrap">${t.id}</td>
+              <td style="max-width:260px"><div style="font-size:11px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" title="${t.title}">${t.title}</div></td>
+              <td><span class="status-pill status-${t.status}">${t.statusLabel}</span></td>
+              <td><span class="deadline ${t.status==='overdue'?'overdue':''}">${t.deadline}</span></td>
+              <td style="font-size:10px;color:var(--t3)">${t.dept}</td>
+              <td><div class="top-avatar" style="background:var(--blue-mid);width:22px;height:22px;font-size:8px">${t.assignee}</div></td>
+              <td><button class="btn-action btn-view" onclick="alert('Открыть задачу ${t.id}')">→</button></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="w-footer"><a class="w-link">Все задачи →</a><span style="margin-left:auto;font-size:10px;color:var(--t3)">1–6 из 24</span></div>
+  </div>`;
+}
+
+function widgetTasksKanban(size='w4'){
+  const cols=[
+    {title:'Новые',color:'#378ADD',count:4,cards:[{title:'Согласование ГПЗУ ул. Лесная',due:'05.04',late:false},{title:'Запрос по объекту №441',due:'06.04',late:false}]},
+    {title:'В работе',color:'#5A9020',count:3,cards:[{title:'Проверка ПМТ Садовая',due:'02.04',late:false},{title:'Заключение №338',due:'05.04',late:false}]},
+    {title:'На проверке',color:'#B87016',count:2,cards:[{title:'Ответ Мосгорпроекту',due:'03.04',late:false}]},
+    {title:'Просрочено',color:'#D94444',count:3,cards:[{title:'ГПЗУ ул. Ленина 45',due:'28.03',late:true},{title:'Реестр объектов',due:'29.03',late:true}]},
+  ];
+  return `<div class="widget ${size}" id="w-tasks">
+    ${wHead('green', icons.task, 'Мои задачи — Канбан', '12 задач', '<span class="w-badge red">3 просрочено</span>')}
+    <div class="w-body" style="padding:8px 14px">
+      <div class="w-tabs" style="margin-bottom:8px">
+        <button class="w-tab" onclick="switchTasksTab(this,'list')">Список</button>
+        <button class="w-tab active" onclick="switchTasksTab(this,'kanban')">Канбан</button>
+        <button class="w-tab" onclick="switchTasksTab(this,'gantt')">Гантт</button>
+      </div>
+      <div class="kanban-board">
+        ${cols.map(c=>`<div class="kanban-col">
+          <div class="kanban-col-header" style="color:${c.color}">
+            ${c.title}<span class="kanban-col-count">${c.count}</span>
+          </div>
+          ${c.cards.map(k=>`<div class="k-card">
+            <div class="k-card-title">${k.title}</div>
+            <div class="k-card-meta">
+              <svg width="9" height="9" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--t3)"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span class="k-card-due ${k.late?'late':''}">${k.due}</span>
+            </div>
+          </div>`).join('')}
+          <div style="font-size:9px;color:var(--t3);text-align:center;padding:4px 0;cursor:pointer">+ добавить</div>
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+function widgetTasksGantt(size='w4'){
+  const rows=[
+    {label:'ГПЗУ Ленина 45',start:0,len:30,color:'#D94444'},
+    {label:'ПМТ Садовая',start:10,len:50,color:'#5A9020'},
+    {label:'Заключение №338',start:25,len:35,color:'#378ADD'},
+    {label:'Ответ МГП',start:40,len:20,color:'#B87016'},
+    {label:'Реестр ИЖС',start:55,len:30,color:'#8B5CF6'},
+  ];
+  return `<div class="widget ${size}" id="w-tasks">
+    ${wHead('green', icons.task, 'Мои задачи — Гантт', 'Апрель 2026', '')}
+    <div class="w-body" style="padding:8px 14px">
+      <div class="w-tabs" style="margin-bottom:8px">
+        <button class="w-tab" onclick="switchTasksTab(this,'list')">Список</button>
+        <button class="w-tab" onclick="switchTasksTab(this,'kanban')">Канбан</button>
+        <button class="w-tab active" onclick="switchTasksTab(this,'gantt')">Гантт</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;padding-left:108px">
+        ${['01','08','15','22','29'].map(d=>`<div style="flex:1;font-size:8px;color:var(--t3)">${d} апр</div>`).join('')}
+      </div>
+      ${rows.map(r=>`<div class="gantt-row">
+        <div class="gantt-label">${r.label}</div>
+        <div class="gantt-track">
+          <div class="gantt-bar" style="left:${r.start}%;width:${r.len}%;background:${r.color};opacity:.85"></div>
+        </div>
+      </div>`).join('')}
+    </div>
+    <div class="w-footer"><a class="w-link">Полный план проекта →</a></div>
+  </div>`;
+}
+
+function switchTasksTab(btn, mode){
+  const dashboard = document.getElementById('dashboard');
+  const old = document.getElementById('w-tasks');
+  if(!old) return;
+  const span = old.className.match(/w[124]|w4/)?.[0] || 'w4';
+  const newWidget = document.createElement('div');
+  newWidget.innerHTML = mode==='kanban' ? widgetTasksKanban(span)
+                       : mode==='gantt'  ? widgetTasksGantt(span)
+                       : widgetTasks(span,'list');
+  const el = newWidget.firstElementChild;
+  old.replaceWith(el);
+}
+
+function widgetQuickAccess(size='w1'){
+  const svcs=[
+    {name:'ИАИС ОГД',abbr:'ОГД',bg:'#185FA5'},
+    {name:'Кадастр',abbr:'КД',bg:'#5A9020'},
+    {name:'Мосгорпро',abbr:'МГП',bg:'#B87016'},
+    {name:'РГИС',abbr:'РГ',bg:'#8B5CF6'},
+    {name:'ЦОД',abbr:'ЦД',bg:'#D94444'},
+    {name:'ЕИСЖС',abbr:'ЖС',bg:'#0891B2'},
+    {name:'ДГИ',abbr:'ДГ',bg:'#059669'},
+    {name:'АГС',abbr:'АГ',bg:'#7C3AED'},
+  ];
+  const grid = size==='w1'?svcs.slice(0,4):svcs;
+  return `<div class="widget ${size}" id="w-quick">
+    ${wHead('amber', icons.lightning, 'Быстрый доступ', 'Часто используемые сервисы', '')}
+    <div class="w-body">
+      <div class="svc-grid" style="grid-template-columns:repeat(${size==='w1'?2:4},1fr)">
+        ${grid.map(s=>`<div class="svc-tile" onclick="alert('Открыть ${s.name}')">
+          <div class="svc-icon" style="background:${s.bg}">${s.abbr}</div>
+          <div class="svc-name">${s.name}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+function widgetFavorites(size='w1'){
+  const items=[
+    {type:'task',icon:'📋',color:'#E6F1FB',title:'ГПЗУ ул. Садовая, 12',meta:'Задача · ЗД-1021'},
+    {type:'doc',icon:'📄',color:'#EAF3DE',title:'Регламент согласования 2026',meta:'Документ · PDF'},
+    {type:'svc',icon:'🏗',color:'#FDF0DA',title:'ИАИС ОГД — Планировщик',meta:'Сервис'},
+    {type:'doc',icon:'📑',color:'#F0E8F8',title:'Приказ № 45 от 15.03.2026',meta:'Норм. база'},
+  ];
+  return `<div class="widget ${size}" id="w-fav">
+    ${wHead('amber', icons.star, 'Избранное', '4 объекта', '')}
+    <div class="w-body">
+      ${items.map(it=>`<div class="fav-item">
+        <div class="fav-icon" style="background:${it.color};font-size:14px">${it.icon}</div>
+        <div style="flex:1;min-width:0">
+          <div class="fav-title">${it.title}</div>
+          <div class="fav-meta">${it.meta}</div>
+        </div>
+        <div class="fav-star">★</div>
+      </div>`).join('')}
+    </div>
+    <div class="w-footer"><a class="w-link">Управлять избранным →</a></div>
+  </div>`;
+}
+
+function widgetDocuments(size='w4'){
+  const docs=[
+    {id:'ДОК-3412',name:'ГПЗУ ул. Тверская 18',type:'pdf',status:'pending',statusLabel:'На подписи',date:'28.03.2026'},
+    {id:'ДОК-3418',name:'Технические условия подключения',type:'docx',status:'review',statusLabel:'На согласовании',date:'01.04.2026'},
+    {id:'ДОК-3425',name:'Акт проверки объекта №214',type:'pdf',status:'done',statusLabel:'Подписан',date:'25.03.2026'},
+    {id:'ДОК-3429',name:'Схема планировочной организации',type:'xlsx',status:'new',statusLabel:'Новый',date:'31.03.2026'},
+    {id:'ДОК-3433',name:'Заключение экспертизы №77',type:'pdf',status:'overdue',statusLabel:'Просрочено',date:'27.03.2026'},
+  ];
+  return `<div class="widget ${size}" id="w-docs">
+    ${wHead('blue', icons.doc, 'Мои документы', '5 документов', '<span class="w-badge blue">2 на подписи</span>')}
+    <div class="w-body" style="padding:8px 14px">
+      <div style="display:flex;gap:6px;margin-bottom:8px">
+        <div class="search-bar" style="margin-bottom:0;flex:1">
+          <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input placeholder="Поиск документа...">
+        </div>
+        <button class="btn-action btn-sign" style="padding:5px 12px;border-radius:6px">Подписать все</button>
+      </div>
+      <table class="doc-table">
+        <thead><tr><th></th><th>№</th><th style="min-width:220px">Наименование</th><th>Статус</th><th>Дата</th><th>Действие</th></tr></thead>
+        <tbody>
+          ${docs.map(d=>`<tr>
+            <td><div class="doc-icon ${d.type}">${d.type.toUpperCase()}</div></td>
+            <td style="font-size:10px;color:var(--blue);font-weight:600;white-space:nowrap">${d.id}</td>
+            <td style="font-size:11px;font-weight:500">${d.name}</td>
+            <td><span class="status-pill status-${d.status==='pending'?'review':d.status}">${d.statusLabel}</span></td>
+            <td style="font-size:10px;color:var(--t3)">${d.date}</td>
+            <td><button class="btn-action ${d.status==='pending'?'btn-sign':'btn-view'}">${d.status==='pending'?'Подписать':'Открыть'}</button></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div class="w-footer"><a class="w-link">Все документы →</a><span style="margin-left:auto;font-size:10px;color:var(--t3)">1–5 из 18</span></div>
+  </div>`;
+}
+
+function widgetApplications(size='w2'){
+  const apps=[
+    {id:'ЗЯВ-891',name:'Предварит. согласование ГПЗУ',stage:3,totalStages:5,pct:60,status:'review',statusLabel:'Экспертиза',date:'14.03.2026'},
+    {id:'ЗЯВ-903',name:'Разрешение на строительство',stage:1,totalStages:4,pct:25,status:'new',statusLabel:'Регистрация',date:'29.03.2026'},
+    {id:'ЗЯВ-915',name:'Ввод объекта в эксплуатацию',stage:4,totalStages:4,pct:90,status:'inprog',statusLabel:'Финальная пров.',date:'20.03.2026'},
+  ];
+  return `<div class="widget ${size}" id="w-apps">
+    ${wHead('green', icons.form, 'Мои заявления', '3 активных', '')}
+    <div class="w-body" style="padding:8px 14px">
+      <table class="doc-table">
+        <thead><tr><th>№</th><th style="min-width:160px">Наименование</th><th>Стадия</th><th>Прогресс</th><th>Дата</th></tr></thead>
+        <tbody>
+          ${apps.map(a=>`<tr>
+            <td style="font-size:10px;color:var(--blue);font-weight:600;white-space:nowrap">${a.id}</td>
+            <td style="font-size:11px">${a.name}</td>
+            <td><span class="status-pill status-${a.status}">${a.statusLabel}</span></td>
+            <td style="min-width:90px">
+              <div style="display:flex;align-items:center;gap:4px">
+                <div style="flex:1;height:5px;background:var(--border2);border-radius:2px;overflow:hidden">
+                  <div style="height:100%;border-radius:2px;width:${a.pct}%;background:${a.pct>80?'var(--green-mid)':a.pct>40?'var(--blue-mid)':'var(--amber-mid)'}"></div>
+                </div>
+                <span style="font-size:9px;color:var(--t3)">${a.stage}/${a.totalStages}</span>
+              </div>
+            </td>
+            <td style="font-size:10px;color:var(--t3)">${a.date}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div class="w-footer"><a class="w-link">Все заявления →</a></div>
+  </div>`;
+}
+
+function widgetActivity(size='w1'){
+  const items=[
+    {name:'Козлова Н.',bg:'#5A9020',text:'закрыла задачу <strong>ЗД-1038</strong>',time:'9:41'},
+    {name:'Попов Д.',bg:'#B87016',text:'загрузил документ <strong>ДОК-3433</strong>',time:'9:28'},
+    {name:'Смирнов А.',bg:'#185FA5',text:'создал заявление <strong>ЗЯВ-915</strong>',time:'8:55'},
+    {name:'Лебедев М.',bg:'#8B5CF6',text:'добавил комментарий к <strong>ЗД-1031</strong>',time:'вчера'},
+    {name:'Новикова Е.',bg:'#D94444',text:'подписала документ <strong>ДОК-3412</strong>',time:'вчера'},
+  ];
+  return `<div class="widget ${size}" id="w-activity">
+    ${wHead('purple','<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>','Активность команды','Последние действия','')}
+    <div class="w-body">
+      ${items.map(it=>`<div class="act-item">
+        <div class="act-avatar" style="background:${it.bg};width:26px;height:26px;font-size:9px;font-weight:700">${it.name.slice(0,2)}</div>
+        <div class="act-text"><strong>${it.name}</strong> ${it.text}</div>
+        <div class="act-time">${it.time}</div>
+      </div>`).join('')}
+    </div>
+    <div class="w-footer"><a class="w-link">Полный журнал →</a></div>
+  </div>`;
+}
+
+function widgetCalendar(size='w1'){
+  const events=[
+    {time:'10:00',title:'Совещание по ГП',loc:'Зал 3',color:'#378ADD'},
+    {time:'12:30',title:'Согласование ГПЗУ №214',loc:'Онлайн',color:'#5A9020'},
+    {time:'15:00',title:'Приёмная комиссия',loc:'Каб. 211',color:'#B87016'},
+  ];
+  const today=31;
+  const days=[29,30,31,1,2,3,4];
+  const dayLabels=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+  return `<div class="widget ${size}" id="w-cal">
+    ${wHead('blue', icons.cal, 'Мой календарь', 'Сегодня, 31 марта 2026', '')}
+    <div class="w-body">
+      <div class="cal-week">
+        ${dayLabels.map(d=>`<div class="cal-day-label">${d}</div>`).join('')}
+        ${days.map(d=>`<div class="cal-day ${d===today?'today':''} ${[30,31,1,2].includes(d)?'has-event':''}">${d}</div>`).join('')}
+      </div>
+      <div style="font-size:10px;font-weight:700;color:var(--t2);margin:8px 0 6px">Сегодня</div>
+      <div class="cal-events">
+        ${events.map(e=>`<div class="cal-event-item">
+          <div class="cal-event-bar" style="background:${e.color}"></div>
+          <div class="cal-event-time">${e.time}</div>
+          <div>
+            <div class="cal-event-title">${e.title}</div>
+            <div class="cal-event-loc">${e.loc}</div>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>
+    <div class="w-footer"><a class="w-link">Открыть календарь →</a></div>
+  </div>`;
+}
+
+function widgetNews(size='w1'){
+  const items=[
+    {tag:'Объявление',tagColor:'blue-bg:#E6F1FB;color:var(--blue)',title:'Обновлён регламент согласования ГПЗУ с 01.04.2026',date:'31 марта 2026'},
+    {tag:'Новость',tagColor:'green-bg:#EAF3DE;color:var(--green)',title:'Запущен новый модуль мониторинга ОКС',date:'29 марта 2026'},
+    {tag:'Важно',tagColor:'red-bg:#FCE8E8;color:var(--red)',title:'Изменены сроки рассмотрения заявок на ИЖС',date:'27 марта 2026'},
+    {tag:'Новость',tagColor:'green-bg:#EAF3DE;color:var(--green)',title:'Интеграция с ИАИС ОГД прошла успешно',date:'25 марта 2026'},
+  ];
+  const tagStyles={
+    'Объявление':'background:#E6F1FB;color:var(--blue)',
+    'Новость':'background:#EAF3DE;color:var(--green)',
+    'Важно':'background:#FCE8E8;color:var(--red)',
+  };
+  return `<div class="widget ${size}" id="w-news">
+    ${wHead('amber', icons.news, 'Лента новостей', '4 новых материала', '')}
+    <div class="w-body">
+      ${items.map(it=>`<div class="news-item">
+        <span class="news-tag" style="${tagStyles[it.tag]}">${it.tag}</span>
+        <div class="news-title">${it.title}</div>
+        <div class="news-date">${it.date}</div>
+      </div>`).join('')}
+    </div>
+    <div class="w-footer"><a class="w-link">Все новости →</a></div>
+  </div>`;
+}
+
+function widgetNotifications(size='w1'){
+  const items=[
+    {text:'Задача ЗД-1024 просрочена — требует немедленного внимания',time:'10 мин',color:'#D94444',unread:true},
+    {text:'Документ ДОК-3412 ожидает вашей подписи',time:'45 мин',color:'#185FA5',unread:true},
+    {text:'Новое заявление ЗЯВ-903 назначено вашему отделу',time:'1 ч',color:'#5A9020',unread:true},
+    {text:'Совещание через 30 минут: согласование ГП',time:'1 ч',color:'#B87016',unread:false},
+    {text:'Задача ЗД-1031 изменила статус: "В работе"',time:'2 ч',color:'var(--t3)',unread:false},
+  ];
+  return `<div class="widget ${size}" id="w-notif">
+    ${wHead('red', icons.bell, 'Уведомления', '', '<span class="w-badge red">3 новых</span>')}
+    <div class="w-body">
+      ${items.map(it=>`<div class="notif-item ${it.unread?'unread':''}">
+        <div class="notif-dot" style="background:${it.color}"></div>
+        <div class="notif-text">${it.text}</div>
+        <div class="notif-time">${it.time}</div>
+      </div>`).join('')}
+    </div>
+    <div class="w-footer"><a class="w-link">Все уведомления →</a><button class="btn-action btn-view" style="margin-left:auto;border-radius:4px">Прочитать все</button></div>
+  </div>`;
+}
+
+function widgetRegulatory(size='w2'){
+  const tree=[
+    {title:'Градостроительный кодекс РФ',count:12,children:[
+      {title:'Ст.44. ГПЗУ',count:3},{title:'Ст.51. Разрешение на строит.',count:5}
+    ]},
+    {title:'Постановления Правительства Москвы',count:28,children:[
+      {title:'ПП №45 — Регламент ОГД',count:8}
+    ]},
+    {title:'Приказы ДГА',count:7,children:[]},
+    {title:'Технические регламенты',count:15,children:[]},
+  ];
+  return `<div class="widget ${size}" id="w-reg">
+    ${wHead('blue', icons.book, 'Нормативная база', '62 документа', '')}
+    <div class="w-body">
+      <div class="search-bar">
+        <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input placeholder="Поиск нормативных документов...">
+      </div>
+      ${tree.map(item=>`<div class="tree-item">
+        <div class="tree-row">
+          <div class="tree-toggle" style="color:var(--blue)">▾</div>
+          <svg width="12" height="12" fill="none" stroke="var(--blue)" stroke-width="2" viewBox="0 0 24 24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+          <span class="tree-label section">${item.title}</span>
+          <span class="tree-count">${item.count}</span>
+        </div>
+        ${item.children.map(c=>`<div class="tree-sub"><div class="tree-row" style="padding:3px 0">
+          <div style="width:14px"></div>
+          <svg width="10" height="10" fill="none" stroke="var(--t3)" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+          <span class="tree-label" style="margin-left:4px">${c.title}</span>
+          <span class="tree-count">${c.count}</span>
+        </div></div>`).join('')}
+      </div>`).join('')}
+    </div>
+    <div class="w-footer"><a class="w-link">Полная нормативная база →</a></div>
+  </div>`;
+}
+
+function widgetDirectory(size='w1'){
+  const people=[
+    {name:'Алексеев С.П.',pos:'Начальник ОГА',dept:'ОГА',bg:'#185FA5',status:'online'},
+    {name:'Смирнова Е.В.',pos:'Гл. специалист',dept:'ОТП',bg:'#5A9020',status:'away'},
+    {name:'Попов Д.Р.',pos:'Специалист',dept:'ОКС',bg:'#B87016',status:'online'},
+    {name:'Новикова М.С.',pos:'Вед. специалист',dept:'ОГА',bg:'#8B5CF6',status:'offline'},
+  ];
+  return `<div class="widget ${size}" id="w-dir">
+    ${wHead('green', icons.users, 'Справочник сотрудников', '128 сотрудников', '')}
+    <div class="w-body">
+      <div class="search-bar">
+        <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input placeholder="Найти сотрудника...">
+      </div>
+      ${people.map(p=>`<div class="dir-row">
+        <div class="dir-avatar" style="background:${p.bg}">${p.name.split(' ').map(n=>n[0]).join('').slice(0,2)}</div>
+        <div class="dir-info">
+          <div class="dir-name">${p.name}</div>
+          <div class="dir-pos">${p.pos}</div>
+        </div>
+        <div class="dir-dept">${p.dept}</div>
+        <div class="dir-status ${p.status}" title="${p.status==='online'?'Онлайн':p.status==='away'?'Отошёл':'Недоступен'}"></div>
+      </div>`).join('')}
+    </div>
+    <div class="w-footer"><a class="w-link">Полный справочник →</a></div>
+  </div>`;
+}
+
+// ════════════════════════════════════════════
+//  PRESET LAYOUTS
+// ════════════════════════════════════════════
+const presets = {
+  overview: () => [
+    widgetKPI(2),
+    widgetViolations('w2'),
+    widgetCalendar('w1'),
+    widgetNotifications('w1'),
+    widgetNews('w1'),
+    widgetQuickAccess('w1'),
+  ],
+  tasks: () => [
+    widgetTasks('w4','list'),
+    widgetKPI(1),
+    widgetDocuments('w4') && widgetApplications('w2'),
+    widgetCalendar('w1'),
+    widgetQuickAccess('w1'),
+    widgetActivity('w1'),
+    widgetFavorites('w1'),
+  ],
+  analytics: () => [
+    widgetChart('w4'),
+    widgetKPI('xl'),
+    widgetFunnel('w2'),
+    widgetViolations('w2'),
+    widgetTop5('w1'),
+    widgetActivity('w1'),
+    widgetCalendar('w1'),
+    widgetNotifications('w1'),
+  ],
+  documents: () => [
+    widgetDocuments('w4'),
+    widgetApplications('w2'),
+    widgetRegulatory('w2'),
+    widgetNotifications('w1'),
+    widgetQuickAccess('w1'),
+    widgetDirectory('w1'),
+    widgetKPI(1),
+  ],
+};
+
+// ════════════════════════════════════════════
+//  SPECIAL CASES FOR TASK PRESET
+// ════════════════════════════════════════════
+function buildPreset(name){
+  const db = document.getElementById('dashboard');
+  db.classList.add('switching');
+  setTimeout(()=>{
+    db.innerHTML='';
+    db.classList.remove('switching');
+    if(name==='tasks'){
+      db.innerHTML = widgetTasks('w4','list')
+        + widgetKPI(1) + widgetCalendar('w1') + widgetQuickAccess('w1') + widgetActivity('w1')
+        + widgetFavorites('w1') + widgetApplications('w2');
+    } else if(name==='analytics'){
+      db.innerHTML = widgetChart('w4')
+        + widgetKPI(2) + widgetFunnel('w2')
+        + widgetViolations('w2') + widgetTop5('w1') + widgetActivity('w1') + widgetCalendar('w1') + widgetNotifications('w1');
+    } else if(name==='documents'){
+      db.innerHTML = widgetDocuments('w4')
+        + widgetApplications('w2') + widgetRegulatory('w2')
+        + widgetNotifications('w1') + widgetQuickAccess('w1') + widgetDirectory('w1') + widgetKPI(1);
+    } else {
+      // overview
+      db.innerHTML = widgetKPI(2) + widgetViolations('w2')
+        + widgetCalendar('w1') + widgetNotifications('w1') + widgetNews('w1') + widgetQuickAccess('w1');
+    }
+  },160);
+}
+
+function setPreset(name, btn){
+  document.querySelectorAll('.preset-pill').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  buildPreset(name);
+}
+
+// ════════════════════════════════════════════
+//  EDIT MODE
+// ════════════════════════════════════════════
+function toggleEdit(){
+  const btn = document.getElementById('editBtn');
+  const db = document.getElementById('dashboard');
+  const active = btn.classList.toggle('active');
+  btn.innerHTML = active
+    ? `<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg> Готово`
+    : `<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Настроить`;
+  db.querySelectorAll('.widget').forEach(w=>{
+    if(active) w.classList.add('edit-mode');
+    else w.classList.remove('edit-mode');
+  });
+}
+
+// ════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════
+buildPreset('overview');
+</script>
+</body>
+</html>

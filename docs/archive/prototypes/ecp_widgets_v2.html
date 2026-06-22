@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ЕЦП ГД — Виджеты v2 (Material You)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   DESIGN TOKENS — Material You / ЕЦП
+═══════════════════════════════════════════════ */
+:root{
+  --bg:#F0F2F5;
+  --surface:#FFFFFF;
+  --surface-variant:#F5F6F9;
+  --surface-tonal:#EEF1F8;
+  --outline:#E1E4EC;
+  --outline-variant:#ECEEF4;
+
+  --t1:#0F1623;--t2:#4A5068;--t3:#9599AB;
+  
+  /* Blue primary */
+  --p:#1B5EBF;--p-light:#E8F0FD;--p-mid:#3B7EE8;--p-dark:#0F3F88;
+  /* Green */
+  --g:#1A6E3A;--g-light:#E4F5EB;--g-mid:#2E9B58;--g-dark:#0F4222;
+  /* Amber */
+  --a:#8A5000;--a-light:#FFF3E0;--a-mid:#E08C00;--a-dark:#4D2D00;
+  /* Red */
+  --r:#C0292A;--r-light:#FDEAEA;--r-mid:#E84343;
+  /* Teal */
+  --teal:#006878;--teal-light:#E0F4F7;--teal-mid:#0097B2;
+  /* Purple */
+  --pur:#5B2AB0;--pur-light:#EFE8FA;--pur-mid:#7B3FD8;
+  /* Rose */
+  --ros:#A31564;--ros-light:#FCE8F2;--ros-mid:#E01F87;
+
+  --radius-xl:20px;--radius-lg:16px;--radius-md:12px;--radius-sm:8px;--radius-pill:100px;
+  
+  --el0:none;
+  --el1:0 1px 3px rgba(15,22,35,.06),0 1px 2px rgba(15,22,35,.04);
+  --el2:0 3px 8px rgba(15,22,35,.08),0 1px 3px rgba(15,22,35,.05);
+  --el3:0 8px 24px rgba(15,22,35,.10),0 2px 6px rgba(15,22,35,.06);
+  --el4:0 16px 40px rgba(15,22,35,.13),0 4px 12px rgba(15,22,35,.07);
+  
+  --font:'Golos Text',-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;
+  --dur:.18s;--ease:cubic-bezier(.2,.0,.0,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px;line-height:1.5;padding:32px 28px;min-height:100vh}
+
+/* ── PAGE HEADER ── */
+.page-header{margin-bottom:32px}
+.page-header h1{font-size:13px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.page-header p{font-size:20px;font-weight:700;color:var(--t1)}
+.page-header span{color:var(--p-mid)}
+
+.widgets-layout{display:flex;flex-direction:column;gap:28px}
+
+/* ═══════════════════════════════════════════════
+   WIDGET SHELL
+═══════════════════════════════════════════════ */
+.widget{background:var(--surface);border-radius:var(--radius-xl);box-shadow:var(--el1);border:1px solid var(--outline-variant);overflow:hidden;transition:box-shadow var(--dur) var(--ease)}
+.widget:hover{box-shadow:var(--el2)}
+
+.w-header{padding:18px 22px 14px;display:flex;align-items:center;gap:12px}
+.w-title-block{flex:1}
+.w-title{font-size:16px;font-weight:700;color:var(--t1);letter-spacing:-.2px}
+.w-subtitle{font-size:12px;color:var(--t3);margin-top:1px;font-weight:500}
+.w-actions{display:flex;align-items:center;gap:6px}
+
+.icon-btn{width:34px;height:34px;border-radius:var(--radius-sm);border:1px solid var(--outline);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t3);transition:all var(--dur) var(--ease);flex-shrink:0}
+.icon-btn:hover{background:var(--surface-variant);color:var(--t1);border-color:var(--p-mid)}
+.icon-btn.active{background:var(--p-light);color:var(--p);border-color:var(--p-mid)}
+.icon-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+.primary-btn{height:36px;padding:0 18px;border-radius:var(--radius-sm);border:none;background:var(--p);color:#fff;font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all var(--dur) var(--ease);flex-shrink:0}
+.primary-btn:hover{background:var(--p-dark);box-shadow:0 4px 14px rgba(27,94,191,.35)}
+.primary-btn svg{width:15px;height:15px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+.divider{height:1px;background:var(--outline-variant);margin:0}
+.w-footer{padding:12px 22px;display:flex;align-items:center;gap:8px;border-top:1px solid var(--outline-variant)}
+.text-link{font-size:12px;font-weight:600;color:var(--p-mid);cursor:pointer;transition:color var(--dur);text-decoration:none}
+.text-link:hover{color:var(--p)}
+.text-link-icon{display:flex;align-items:center;gap:4px}
+
+/* ═══════════════════════════════════════════════
+   1. ВИТРИНА СЕРВИСОВ
+═══════════════════════════════════════════════ */
+.showcase-search{padding:0 22px 14px;display:flex;align-items:center;gap:8px}
+.search-field{flex:1;height:36px;border-radius:var(--radius-sm);border:1px solid var(--outline);background:var(--surface-variant);padding:0 12px 0 36px;font-family:var(--font);font-size:13px;color:var(--t1);outline:none;transition:all var(--dur) var(--ease);position:relative}
+.search-field:focus{border-color:var(--p-mid);background:#fff;box-shadow:0 0 0 3px rgba(59,126,232,.12)}
+.search-wrap{flex:1;position:relative}
+.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--t3);pointer-events:none;fill:none;stroke:currentColor;stroke-width:2}
+
+.svc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;padding:0 22px 20px}
+
+.svc-tile{
+  background:var(--surface);border:1.5px solid var(--outline-variant);
+  border-radius:var(--radius-lg);padding:14px 16px;
+  display:flex;align-items:center;gap:12px;
+  cursor:pointer;position:relative;overflow:hidden;
+  transition:all var(--dur) var(--ease);
+  min-height:64px;
+}
+.svc-tile::before{
+  content:'';position:absolute;inset:0;
+  background:var(--svc-color,var(--p-light));
+  opacity:0;transition:opacity var(--dur) var(--ease);border-radius:inherit;
+}
+.svc-tile:hover{border-color:var(--svc-border,var(--p-mid));box-shadow:var(--el2);transform:translateY(-2px)}
+.svc-tile:hover::before{opacity:1}
+.svc-tile:active{transform:translateY(0);box-shadow:var(--el1)}
+
+.svc-icon-wrap{
+  width:38px;height:38px;border-radius:10px;
+  background:var(--svc-bg,var(--p-light));
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;position:relative;z-index:1;transition:all var(--dur) var(--ease);
+}
+.svc-tile:hover .svc-icon-wrap{transform:scale(1.08)}
+.svc-icon-wrap svg{width:20px;height:20px;fill:none;stroke:var(--svc-icon-color,var(--p));stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+.svc-name{font-size:13px;font-weight:600;color:var(--t1);position:relative;z-index:1;line-height:1.3}
+.svc-tile.add-tile .svc-icon-wrap{background:var(--surface-variant);border:1.5px dashed var(--outline)}
+.svc-tile.add-tile .svc-name{color:var(--t3)}
+
+/* Badge for new/important */
+.svc-badge{
+  position:absolute;top:8px;right:8px;
+  width:8px;height:8px;border-radius:50%;
+  background:var(--r-mid);border:2px solid #fff;
+  z-index:2;
+}
+
+/* ═══════════════════════════════════════════════
+   2. МОИ ЗАДАЧИ — GANTT
+═══════════════════════════════════════════════ */
+.gantt-header{padding:16px 22px;display:flex;align-items:center;gap:10px}
+.view-switcher{display:flex;gap:2px;background:var(--surface-variant);border:1px solid var(--outline);border-radius:var(--radius-sm);padding:3px}
+.view-btn{width:30px;height:28px;border-radius:6px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t3);transition:all var(--dur) var(--ease)}
+.view-btn:hover{color:var(--t1)}
+.view-btn.active{background:var(--surface);color:var(--p);box-shadow:var(--el1)}
+.view-btn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+.gantt-nav{display:flex;align-items:center;gap:6px;margin-left:auto}
+.nav-btn{width:30px;height:30px;border-radius:var(--radius-sm);border:1px solid var(--outline);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t2);transition:all var(--dur) var(--ease)}
+.nav-btn:hover{border-color:var(--p-mid);color:var(--p)}
+.nav-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.5}
+.gantt-period{font-size:13px;font-weight:700;color:var(--t1);padding:0 6px;min-width:160px;text-align:center}
+
+/* Gantt table */
+.gantt-wrap{overflow-x:auto;padding:0 0 4px}
+.gantt-table{width:100%;border-collapse:collapse;table-layout:fixed}
+.gantt-table th{
+  padding:8px 0;text-align:center;
+  font-size:11px;font-weight:600;color:var(--t3);
+  border-bottom:1px solid var(--outline-variant);
+  position:relative;white-space:nowrap;
+}
+.gantt-table th.today-col{color:var(--p);font-weight:700}
+.gantt-table th .day-num{font-size:15px;font-weight:700;display:block;color:var(--t1);line-height:1.2}
+.gantt-table th.today-col .day-num{
+  background:var(--p);color:#fff;
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 2px;font-size:13px;
+}
+.gantt-label-col{width:180px;min-width:180px}
+.gantt-label-th{text-align:left!important;padding:8px 14px 8px 22px!important;font-size:12px;font-weight:700;color:var(--t2)!important}
+
+.gantt-table td{padding:5px 3px;border-bottom:1px solid var(--outline-variant);vertical-align:middle;height:42px;position:relative}
+.gantt-table td.label-td{padding:5px 14px 5px 22px}
+.gantt-table tbody tr:hover td{background:rgba(27,94,191,.025)}
+.gantt-table tbody tr:last-child td{border-bottom:none}
+.gantt-table td.today-bg{background:rgba(27,94,191,.04)}
+.gantt-table td.weekend{background:var(--surface-variant);opacity:.6}
+
+.task-label{display:flex;align-items:center;gap:8px}
+.task-id{font-size:10px;font-weight:700;color:var(--p);background:var(--p-light);padding:2px 7px;border-radius:10px;white-space:nowrap}
+.task-name{font-size:12px;font-weight:500;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100px}
+.task-avatar{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;flex-shrink:0}
+
+/* Gantt bars */
+.gantt-bar-cell{position:relative}
+.gantt-bar{
+  position:absolute;top:50%;transform:translateY(-50%);
+  height:22px;border-radius:6px;
+  display:flex;align-items:center;padding:0 8px;
+  font-size:10px;font-weight:700;color:#fff;
+  white-space:nowrap;overflow:hidden;
+  cursor:pointer;transition:all var(--dur) var(--ease);
+  box-shadow:0 2px 6px rgba(0,0,0,.15);
+}
+.gantt-bar:hover{filter:brightness(1.08);box-shadow:0 4px 12px rgba(0,0,0,.22);transform:translateY(calc(-50% - 1px))}
+.gantt-bar.overdue{background:linear-gradient(135deg,#E84343,#C02929)}
+.gantt-bar.at-risk{background:linear-gradient(135deg,#F5A623,#D4870A)}
+.gantt-bar.normal{background:linear-gradient(135deg,#4A9FE8,#1B6CC8)}
+.gantt-bar.done{background:linear-gradient(135deg,#4CAF7D,#2E7D55)}
+
+.gantt-bar-label{display:flex;align-items:center;gap:5px}
+.overdue-badge{background:rgba(255,255,255,.25);padding:1px 5px;border-radius:4px;font-size:9px}
+
+/* Today line */
+.today-line{position:absolute;top:0;bottom:0;left:50%;width:2px;background:var(--p);opacity:.4;pointer-events:none;z-index:10}
+
+/* ═══════════════════════════════════════════════
+   3. ИЗБРАННОЕ
+═══════════════════════════════════════════════ */
+.fav-tabs{display:flex;gap:2px;background:var(--surface-variant);border:1px solid var(--outline);border-radius:var(--radius-pill);padding:3px}
+.fav-tab{padding:5px 16px;border-radius:var(--radius-pill);border:none;background:transparent;font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;color:var(--t3);transition:all var(--dur) var(--ease)}
+.fav-tab.active{background:var(--surface);color:var(--p);box-shadow:var(--el1)}
+.fav-tab:hover:not(.active){color:var(--t1)}
+
+.fav-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:4px 22px 20px}
+
+.fav-card{
+  background:var(--surface);border:1.5px solid var(--outline-variant);
+  border-radius:var(--radius-lg);padding:14px 16px;
+  cursor:pointer;transition:all var(--dur) var(--ease);
+  display:flex;flex-direction:column;gap:8px;
+  position:relative;overflow:hidden;
+}
+.fav-card::after{content:'';position:absolute;inset:0;background:var(--p-light);opacity:0;transition:opacity var(--dur) var(--ease)}
+.fav-card:hover{border-color:var(--p-mid);box-shadow:var(--el2);transform:translateY(-1px)}
+.fav-card:hover::after{opacity:.5}
+.fav-card.add-card{border-style:dashed;display:flex;flex-direction:row;align-items:center;gap:12px;justify-content:center;background:var(--surface-variant)}
+.fav-card.add-card:hover{background:var(--p-light);border-color:var(--p-mid)}
+
+.fav-card-head{display:flex;align-items:flex-start;gap:10px;position:relative;z-index:1}
+.fav-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform var(--dur) var(--ease)}
+.fav-card:hover .fav-icon{transform:scale(1.06)}
+.fav-icon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.fav-card-info{flex:1;min-width:0}
+.fav-card-title{font-size:13px;font-weight:700;color:var(--t1);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.fav-card-body{position:relative;z-index:1}
+.fav-card-author{font-size:11px;font-weight:500;color:var(--t3);display:flex;align-items:center;gap:5px;margin-bottom:3px}
+.fav-card-desc{font-size:11px;color:var(--t2);line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.fav-card-footer{display:flex;align-items:center;gap:6px;position:relative;z-index:1;padding-top:4px;border-top:1px solid var(--outline-variant)}
+.chip{font-size:10px;font-weight:700;padding:2px 8px;border-radius:var(--radius-pill);display:inline-flex;align-items:center;gap:4px}
+.chip.blue{background:var(--p-light);color:var(--p)}
+.chip.green{background:var(--g-light);color:var(--g)}
+.chip.amber{background:var(--a-light);color:var(--a)}
+.chip.teal{background:var(--teal-light);color:var(--teal)}
+.fav-card-time{font-size:10px;color:var(--t3);margin-left:auto}
+
+.add-card-icon{width:44px;height:44px;border-radius:50%;background:var(--p-light);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.add-card-icon svg{width:22px;height:22px;fill:none;stroke:var(--p);stroke-width:2.2;stroke-linecap:round}
+.add-card-label{font-size:14px;font-weight:700;color:var(--p)}
+
+/* ═══════════════════════════════════════════════
+   STAGGERED ANIMATION
+═══════════════════════════════════════════════ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.widget{animation:fadeUp .4s var(--ease) both}
+.widget:nth-child(1){animation-delay:.05s}
+.widget:nth-child(2){animation-delay:.12s}
+.widget:nth-child(3){animation-delay:.19s}
+
+@keyframes barIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+.gantt-bar{animation:barIn .35s var(--ease) both}
+.svc-tile{animation:fadeUp .3s var(--ease) both}
+.fav-card{animation:fadeUp .3s var(--ease) both}
+
+/* ─ stagger tiles ─ */
+.svc-tile:nth-child(1){animation-delay:.08s}
+.svc-tile:nth-child(2){animation-delay:.13s}
+.svc-tile:nth-child(3){animation-delay:.18s}
+.svc-tile:nth-child(4){animation-delay:.23s}
+.svc-tile:nth-child(5){animation-delay:.28s}
+.svc-tile:nth-child(6){animation-delay:.33s}
+.svc-tile:nth-child(7){animation-delay:.38s}
+.svc-tile:nth-child(8){animation-delay:.43s}
+.svc-tile:nth-child(9){animation-delay:.48s}
+.svc-tile:nth-child(10){animation-delay:.53s}
+.fav-card:nth-child(1){animation-delay:.1s}
+.fav-card:nth-child(2){animation-delay:.15s}
+.fav-card:nth-child(3){animation-delay:.20s}
+.fav-card:nth-child(4){animation-delay:.25s}
+.fav-card:nth-child(5){animation-delay:.30s}
+.fav-card:nth-child(6){animation-delay:.35s}
+.fav-card:nth-child(7){animation-delay:.40s}
+.gantt-bar:nth-child(1){animation-delay:.2s}
+.gantt-bar:nth-child(2){animation-delay:.28s}
+.gantt-bar:nth-child(3){animation-delay:.36s}
+.gantt-bar:nth-child(4){animation-delay:.44s}
+.gantt-bar:nth-child(5){animation-delay:.52s}
+
+/* Tooltip */
+.tooltip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--t1);color:#fff;font-size:11px;font-weight:500;padding:5px 10px;border-radius:var(--radius-sm);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:50}
+.tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--t1)}
+.svc-tile:hover .tooltip,.gantt-bar:hover .tooltip{opacity:1}
+
+@media(max-width:900px){
+  .svc-grid{grid-template-columns:repeat(3,1fr)}
+  .fav-grid{grid-template-columns:1fr}
+  .gantt-label-col{width:120px;min-width:120px}
+}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>ЕЦП ГД · Виджеты v2</h1>
+  <p>Material You <span>↗</span> Апгрейд дизайна</p>
+</div>
+
+<div class="widgets-layout">
+
+<!-- ══════════════════════════════════════════
+     1. ВИТРИНА СЕРВИСОВ
+══════════════════════════════════════════ -->
+<div class="widget">
+  <div class="w-header">
+    <div style="width:38px;height:38px;border-radius:10px;background:var(--p-light);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+      <svg width="20" height="20" fill="none" stroke="var(--p)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+    </div>
+    <div class="w-title-block">
+      <div class="w-title">Витрина сервисов</div>
+      <div class="w-subtitle">9 сервисов · 2 избранных</div>
+    </div>
+    <div class="w-actions">
+      <button class="icon-btn" title="Управление сервисами">
+        <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      </button>
+      <button class="icon-btn" title="Все сервисы">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/><circle cx="5" cy="12" r="1.5"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="showcase-search">
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input class="search-field" placeholder="Найти сервис..." type="text">
+    </div>
+  </div>
+
+  <div class="svc-grid">
+
+    <!-- СБИС -->
+    <div class="svc-tile" style="--svc-color:var(--p-light);--svc-border:var(--p-mid);--svc-bg:var(--p-light);--svc-icon-color:var(--p)">
+      <div class="svc-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+      </div>
+      <div class="svc-name">СБИС</div>
+      <div class="svc-badge"></div>
+    </div>
+
+    <!-- СПС УП -->
+    <div class="svc-tile" style="--svc-color:var(--teal-light);--svc-border:var(--teal-mid);--svc-bg:var(--teal-light);--svc-icon-color:var(--teal)">
+      <div class="svc-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"/></svg>
+      </div>
+      <div class="svc-name">СПС УП</div>
+    </div>
+
+    <!-- Вики -->
+    <div class="svc-tile" style="--svc-color:var(--pur-light);--svc-border:var(--pur-mid);--svc-bg:var(--pur-light);--svc-icon-color:var(--pur)">
+      <div class="svc-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      </div>
+      <div class="svc-name">Вики</div>
+    </div>
+
+    <!-- ИАС УГД -->
+    <div class="svc-tile" style="--svc-color:var(--g-light);--svc-border:var(--g-mid);--svc-bg:var(--g-light);--svc-icon-color:var(--g)">
+      <div class="svc-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+      </div>
+      <div class="svc-name">ИАС УГД</div>
+    </div>
+
+    <!-- МосЭДО -->
+    <div class="svc-tile" style="--svc-color:var(--a-light);--svc-border:var(--a-mid);--svc-bg:var(--a-light);--svc-icon-color:var(--a)">
+      <div class="svc-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </div>
+      <div class="svc-name">МосЭДО</div>
+    </div>
+
+    <!-- Задачник -->
+    <div class="svc-tile" style="--svc-color:var(--g-light);--svc-border:var(--g-mid);--svc-bg:var(--g-light);--svc-icon-color:var(--g)">
+      <div class="svc-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      </div>
+      <div class="svc-name">Задачник</div>
+    </div>
+
+    <!-- ИАС ОГД -->
+    <div class="svc-tile" style="--svc-color:var(--p-light);--svc-border:var(--p-mid);--svc-bg:var(--p-light);--svc-icon-color:var(--p)">
+      <div class="svc-icon-wrap">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      </div>
+      <div class="svc-name">ИАС ОГД</div>
+    </div>
+
+    <!-- ИАИС РиН -->
+    <div class="svc-tile" style="--svc-color:var(--ros-light);--svc-border:var(--ros-mid);--svc-bg:var(--ros-light);--svc-icon-color:var(--ros)">
+      <div class="svc-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div class="svc-name">ИАИС РиН</div>
+    </div>
+
+    <!-- АИС ЭП -->
+    <div class="svc-tile" style="--svc-color:var(--teal-light);--svc-border:var(--teal-mid);--svc-bg:var(--teal-light);--svc-icon-color:var(--teal)">
+      <div class="svc-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10,9 9,9 8,9"/></svg>
+      </div>
+      <div class="svc-name">АИС ЭП</div>
+    </div>
+
+    <!-- Добавить -->
+    <div class="svc-tile add-tile" style="--svc-color:var(--surface-variant)" onclick="alert('Добавить сервис')">
+      <div class="svc-icon-wrap">
+        <svg width="20" height="20" fill="none" stroke="var(--t3)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      </div>
+      <div class="svc-name">Добавить</div>
+    </div>
+
+  </div>
+  <div class="w-footer">
+    <a class="text-link text-link-icon">
+      Управление сервисами
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="9,18 15,12 9,6"/></svg>
+    </a>
+    <span style="margin-left:auto;font-size:11px;color:var(--t3);display:flex;align-items:center;gap:4px">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+      Обновлено 15 мин назад
+    </span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     2. МОИ ЗАДАЧИ — GANTT
+══════════════════════════════════════════ -->
+<div class="widget">
+  <div class="gantt-header">
+    <div style="width:38px;height:38px;border-radius:10px;background:var(--g-light);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+      <svg width="20" height="20" fill="none" stroke="var(--g)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+    </div>
+    <div class="w-title-block">
+      <div class="w-title">Мои задачи</div>
+    </div>
+
+    <div class="view-switcher">
+      <!-- Gantt active -->
+      <button class="view-btn active" title="Гантт">
+        <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/><rect x="6" y="4" width="6" height="4" rx="1"/><rect x="7" y="10" width="7" height="4" rx="1"/><rect x="4" y="16" width="8" height="4" rx="1"/></svg>
+      </button>
+      <!-- List -->
+      <button class="view-btn" title="Список">
+        <svg viewBox="0 0 24 24"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><polyline points="3,6 4,7 6,5"/><polyline points="3,12 4,13 6,11"/><polyline points="3,18 4,19 6,17"/></svg>
+      </button>
+      <!-- Board -->
+      <button class="view-btn" title="Доска">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="5" height="18" rx="1"/><rect x="10" y="3" width="5" height="12" rx="1"/><rect x="17" y="3" width="5" height="15" rx="1"/></svg>
+      </button>
+    </div>
+
+    <div class="gantt-nav">
+      <button class="nav-btn"><svg viewBox="0 0 24 24"><polyline points="15,18 9,12 15,6"/></svg></button>
+      <div class="gantt-period">28 апр — 11 мая 2025</div>
+      <button class="nav-btn"><svg viewBox="0 0 24 24"><polyline points="9,18 15,12 9,6"/></svg></button>
+    </div>
+
+    <button class="primary-btn" style="margin-left:10px">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Создать
+    </button>
+  </div>
+
+  <div class="gantt-wrap" id="ganttWrap">
+    <table class="gantt-table" id="ganttTable">
+      <!-- rendered by JS -->
+    </table>
+  </div>
+
+  <div class="w-footer">
+    <span style="font-size:11px;color:var(--t3);display:flex;align-items:center;gap:8px">
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:linear-gradient(135deg,#E84343,#C02929);display:inline-block"></span>Просрочено</span>
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:linear-gradient(135deg,#F5A623,#D4870A);display:inline-block"></span>Под угрозой</span>
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:linear-gradient(135deg,#4A9FE8,#1B6CC8);display:inline-block"></span>В работе</span>
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:linear-gradient(135deg,#4CAF7D,#2E7D55);display:inline-block"></span>Выполнено</span>
+    </span>
+    <a class="text-link text-link-icon" style="margin-left:auto">
+      Все задачи
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="9,18 15,12 9,6"/></svg>
+    </a>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     3. ИЗБРАННОЕ
+══════════════════════════════════════════ -->
+<div class="widget">
+  <div class="w-header">
+    <div style="width:38px;height:38px;border-radius:10px;background:var(--a-light);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+      <svg width="20" height="20" fill="none" stroke="var(--a)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+    </div>
+    <div class="w-title-block">
+      <div class="w-title">Избранное</div>
+      <div class="w-subtitle" id="favSubtitle">7 объектов · Задачи</div>
+    </div>
+    <div class="w-actions">
+      <div class="fav-tabs">
+        <button class="fav-tab active" onclick="switchFavTab('tasks',this)">Задачи</button>
+        <button class="fav-tab" onclick="switchFavTab('opps',this)">Возможности</button>
+      </div>
+      <button class="icon-btn">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/><circle cx="5" cy="12" r="1.5"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="fav-grid" id="favGrid">
+    <!-- rendered by JS -->
+  </div>
+
+  <div class="w-footer">
+    <a class="text-link text-link-icon">
+      Управлять избранным
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="9,18 15,12 9,6"/></svg>
+    </a>
+    <span style="margin-left:auto;font-size:11px;color:var(--t3)">1–7 из 12</span>
+  </div>
+</div>
+
+</div><!-- /widgets-layout -->
+
+<script>
+/* ════════════════════════════════════════════
+   GANTT RENDERER
+════════════════════════════════════════════ */
+const ganttDays = [
+  {day:'Пн',date:'28 апр',isToday:false,isWeekend:false},
+  {day:'Вт',date:'29 апр',isToday:false,isWeekend:false},
+  {day:'Ср',date:'30 апр',isToday:true,isWeekend:false},
+  {day:'Чт',date:'1 мая',isToday:false,isWeekend:false},
+  {day:'Пт',date:'2 мая',isToday:false,isWeekend:false},
+  {day:'Сб',date:'3 мая',isToday:false,isWeekend:true},
+  {day:'Вс',date:'4 мая',isToday:false,isWeekend:true},
+  {day:'Пн',date:'5 мая',isToday:false,isWeekend:false},
+  {day:'Вт',date:'6 мая',isToday:false,isWeekend:false},
+  {day:'Ср',date:'7 мая',isToday:false,isWeekend:false},
+  {day:'Чт',date:'8 мая',isToday:false,isWeekend:false},
+  {day:'Пт',date:'9 мая',isToday:false,isWeekend:false},
+  {day:'Сб',date:'10 мая',isToday:false,isWeekend:true},
+  {day:'Вс',date:'11 мая',isToday:false,isWeekend:true},
+];
+
+const ganttTasks = [
+  {id:'CDP-128',name:'Согласование ГПЗУ',start:0,end:1,type:'overdue',badge:'-4 дн',assignee:'СА',bg:'#B85C5C'},
+  {id:'CDP-127',name:'Проверка ПМТ',start:0,end:2,type:'at-risk',badge:'-2 дн',assignee:'КН',bg:'#B87016'},
+  {id:'CDP-126',name:'Заключение №338',start:1,end:5,type:'at-risk',badge:'',assignee:'ПД',bg:'#B87016'},
+  {id:'CDP-124',name:'Реестр объектов ИЖС',start:3,end:10,type:'normal',badge:'',assignee:'ЛМ',bg:'#1B6CC8'},
+  {id:'CDP-125',name:'Ответ Мосгорпроекту',start:3,end:4,type:'done',badge:'',assignee:'НЕ',bg:'#2E7D55'},
+];
+
+const avatarColors = ['#1B5EBF','#1A6E3A','#B87016','#5B2AB0','#D94444'];
+
+function buildGantt(){
+  const table = document.getElementById('ganttTable');
+  // Header
+  let thead = `<thead><tr>
+    <th class="gantt-label-col gantt-label-th">Задача</th>
+    ${ganttDays.map((d,i)=>`<th class="${d.isToday?'today-col':''}" style="min-width:60px">
+      <span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px">${d.day}</span>
+      ${d.isToday
+        ? `<div class="day-num" style="background:var(--p);color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:2px auto 0;font-size:12px;font-weight:700">${d.date.split(' ')[0]}</div>`
+        : `<div class="day-num" style="font-size:13px;font-weight:700;color:${d.isWeekend?'var(--t3)':'var(--t1)'};margin-top:2px">${d.date.split(' ')[0]}</div>`
+      }
+    </th>`).join('')}
+  </tr></thead>`;
+
+  // Body
+  let tbody = `<tbody>`;
+  ganttTasks.forEach((task, ti) => {
+    tbody += `<tr>`;
+    // Label cell
+    tbody += `<td class="label-td">
+      <div class="task-label">
+        <div class="task-avatar" style="background:${avatarColors[ti]}">${task.assignee}</div>
+        <div>
+          <div class="task-id">${task.id}</div>
+        </div>
+      </div>
+    </td>`;
+
+    // Day cells
+    ganttDays.forEach((d,di) => {
+      const isStart = di === task.start;
+      const inRange = di >= task.start && di <= task.end;
+      const cls = [
+        d.isToday ? 'today-bg' : '',
+        d.isWeekend ? 'weekend' : '',
+        'gantt-bar-cell'
+      ].filter(Boolean).join(' ');
+
+      if(isStart){
+        const span = task.end - task.start + 1;
+        tbody += `<td class="${cls}" colspan="${span}" style="position:relative">
+          <div class="gantt-bar ${task.type}" style="
+            left:6px;right:6px;
+            animation-delay:${0.2 + ti*0.08}s;
+          ">
+            <div class="gantt-bar-label">
+              <span style="font-size:10px;font-weight:700">${task.id}</span>
+              ${task.badge ? `<span class="overdue-badge">${task.badge}</span>` : ''}
+            </div>
+            <div class="tooltip">${task.name}</div>
+          </div>
+        </td>`;
+      } else if(di > task.start && di <= task.end){
+        // already consumed by colspan
+      } else {
+        tbody += `<td class="${cls}"></td>`;
+      }
+    });
+    tbody += `</tr>`;
+  });
+  tbody += `</tbody>`;
+  table.innerHTML = thead + tbody;
+}
+buildGantt();
+
+/* ════════════════════════════════════════════
+   FAVORITES RENDERER
+════════════════════════════════════════════ */
+const ICONS = {
+  task: `<svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>`,
+  opp: `<svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`,
+  doc: `<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>`,
+  map: `<svg viewBox="0 0 24 24"><polygon points="1,6 1,22 8,18 16,22 23,18 23,2 16,6 8,2"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>`,
+};
+
+const favItems = {
+  tasks: [
+    {icon:'task',iconBg:'var(--p-light)',iconColor:'var(--p)',title:'Предоставление информации из сводного плана подземных коммуникаций',author:'Надежда Турилова',desc:'Запускает задачу по предоставлению учётных данных отходопроизводителя',chip:'Активная',chipClass:'blue',time:'2 ч назад'},
+    {icon:'task',iconBg:'var(--g-light)',iconColor:'var(--g)',title:'Предоставление сводного плана по зонам охраны культурного наследия',author:'Алексей Смирнов',desc:'Формирование аналитического отчёта по выданным разрешениям ОКН',chip:'На проверке',chipClass:'amber',time:'4 ч назад'},
+    {icon:'doc',iconBg:'var(--teal-light)',iconColor:'var(--teal)',title:'Предоставление информации из сводного плана подземных коммуникаций',author:'Надежда Турилова',desc:'Запускает задачу по предоставлению учётных данных отходопроизводителя',chip:'Новая',chipClass:'teal',time:'вчера'},
+    {icon:'map',iconBg:'var(--pur-light)',iconColor:'var(--pur)',title:'Предоставление информации из сводного плана подземных коммуникаций',author:'Надежда Турилова',desc:'Запускает задачу по предоставлению учётных данных отходопроизводителя',chip:'Активная',chipClass:'blue',time:'вчера'},
+    {icon:'doc',iconBg:'var(--g-light)',iconColor:'var(--g)',title:'Предоставление информации из сводного плана подземных коммуникаций',author:'Надежда Турилова',desc:'Запускает задачу по предоставлению учётных данных отходопроизводителя',chip:'На проверке',chipClass:'amber',time:'2 дн'},
+    {icon:'task',iconBg:'var(--p-light)',iconColor:'var(--p)',title:'Предоставление информации из сводного плана подземных коммуникаций',author:'Надежда Турилова',desc:'Запускает задачу по предоставлению учётных данных отходопроизводителя',chip:'Активная',chipClass:'blue',time:'3 дн'},
+  ],
+  opps: [
+    {icon:'opp',iconBg:'var(--a-light)',iconColor:'var(--a)',title:'Расширение квартала Р-5 по программе КРТ в Западном округе',author:'Иван Петров',desc:'Потенциал освоения 3.2 га в рамках программы комплексного развития территорий',chip:'Высокий',chipClass:'blue',time:'1 ч назад'},
+    {icon:'opp',iconBg:'var(--g-light)',iconColor:'var(--g)',title:'Реновация промзоны Бирюлёво с переводом в жилую функцию',author:'Мария Соколова',desc:'Переориентация промышленной зоны под жилую застройку по заявке префектуры',chip:'Средний',chipClass:'amber',time:'вчера'},
+    {icon:'map',iconBg:'var(--teal-light)',iconColor:'var(--teal)',title:'Строительство МФЦ «Новая Москва» в кластере ТиНАО',author:'Дмитрий Козлов',desc:'Якорный проект освоения прилегающих территорий в новых районах',chip:'Новая',chipClass:'teal',time:'2 дн'},
+  ]
+};
+
+function renderFavCards(type){
+  const grid = document.getElementById('favGrid');
+  const items = favItems[type];
+  grid.innerHTML = '';
+
+  items.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'fav-card';
+    card.style.animationDelay = (0.08 + i*0.06)+'s';
+    card.innerHTML = `
+      <div class="fav-card-head">
+        <div class="fav-icon" style="background:${item.iconBg};color:${item.iconColor}">${ICONS[item.icon]||ICONS.task}</div>
+        <div class="fav-card-info">
+          <div class="fav-card-title">${item.title}</div>
+        </div>
+      </div>
+      <div class="fav-card-body">
+        <div class="fav-card-author">
+          <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          ${item.author}
+        </div>
+        <div class="fav-card-desc">${item.desc}</div>
+      </div>
+      <div class="fav-card-footer">
+        <span class="chip ${item.chipClass}">${item.chip}</span>
+        <span class="fav-card-time">${item.time}</span>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  // Add button
+  const addCard = document.createElement('div');
+  addCard.className = 'fav-card add-card';
+  addCard.onclick = ()=>alert('Добавить в избранное');
+  addCard.innerHTML = `
+    <div class="add-card-icon">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+    </div>
+    <div class="add-card-label">Добавить</div>
+  `;
+  grid.appendChild(addCard);
+}
+
+function switchFavTab(type, btn){
+  document.querySelectorAll('.fav-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const subtitle = document.getElementById('favSubtitle');
+  if(type==='tasks'){subtitle.textContent='7 объектов · Задачи';}
+  else{subtitle.textContent='3 объекта · Возможности';}
+  renderFavCards(type);
+}
+
+renderFavCards('tasks');
+
+/* View switcher buttons */
+document.querySelectorAll('.view-btn').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    this.closest('.view-switcher').querySelectorAll('.view-btn').forEach(b=>b.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
