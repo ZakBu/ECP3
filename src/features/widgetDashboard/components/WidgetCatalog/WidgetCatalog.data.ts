@@ -62,6 +62,7 @@ const V8_ALL_SIZES: WidgetSize[] = [
   "square",
   "wide",
   "wideTall",
+  "wide4x2",
   "xwide",
   "xl",
 ];

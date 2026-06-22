@@ -14,7 +14,7 @@ import {
   seedMockDashboardUser,
 } from "./dashboardMockRepository";
 
-const CURRENT_SCHEMA_VERSION = 2;
+const CURRENT_SCHEMA_VERSION = 3;
 const USE_MOCK = import.meta.env.VITE_DASHBOARD_MOCK !== "false";
 
 const LEGACY_SIZE_MAP: Record<string, string> = {
@@ -25,6 +25,20 @@ const LEGACY_SIZE_MAP: Record<string, string> = {
 };
 
 export function migrateConfigIfNeeded(config: DashboardConfig): DashboardConfig {
+  if (config.schemaVersion < CURRENT_SCHEMA_VERSION && config.userId === "demo-user-v6") {
+    const template = getMockRoleTemplate(config.role, config.userId);
+    return {
+      ...template,
+      widgetSettings: config.widgetSettings ?? template.widgetSettings,
+      schemaVersion: CURRENT_SCHEMA_VERSION,
+      meta: {
+        schemaVersion: CURRENT_SCHEMA_VERSION,
+        templateOrigin: template.meta?.templateOrigin ?? "custom",
+        firstTimeSetup: false,
+      },
+    };
+  }
+
   const migratedLayout = (config.layout ?? []).map((item) => {
     const mappedSize = item.size ? (LEGACY_SIZE_MAP[item.size] ?? item.size) : item.size;
     return { ...item, size: mappedSize as typeof item.size };

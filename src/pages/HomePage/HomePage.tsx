@@ -52,7 +52,6 @@ import type {
   WidgetSize,
 } from "../../features/widgetDashboard/types/widget.types";
 import { figmaTokens } from "../../theme/figmaTokens";
-import { useTheme } from "@mui/material/styles";
 import { useDashboardCanvasSize } from "./hooks/useDashboardCanvasSize";
 import { useHomePageUiState } from "./hooks/useHomePageUiState";
 import LeftNav from "./components/LeftNav";
@@ -146,8 +145,7 @@ export default function HomePage() {
   } | null>(null);
 
   useEditMode();
-  const theme = useTheme();
-  const isNavCollapsed = useMediaQuery(theme.breakpoints.between("md", "lg"));
+  const isNavCollapsed = useMediaQuery("(min-width:900px) and (max-width:1439.95px)");
 
   useEffect(() => {
     refreshTimeContext();

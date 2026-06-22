@@ -9,9 +9,9 @@ import type {
 
 const dimensionKey = (value: WidgetDimension): string => `${value.w}x${value.h}`;
 
-/** Витрина v7: логическая ячейка 272px, зазор 20px; мелкая сетка 4×4 на логическую ячейку. Ширина дашборда — 8 логических колонок → 32 мелких. */
+/** Витрина v7: логическая ячейка 272px, адаптированный зазор 16px; мелкая сетка 4×4 на логическую ячейку. Ширина дашборда — 8 логических колонок → 32 мелких. */
 export const V7_UNIT_PX = 272;
-export const V7_GAP_PX = 20;
+export const V7_GAP_PX = 16;
 export const DASHBOARD_GRID_COLS = 32;
 /** Легаси-верхняя граница; фактическая высота сетки задаётся высотой экрана (`getDashboardLayoutMaxRows`). */
 export const DASHBOARD_GRID_ROWS = 32;
