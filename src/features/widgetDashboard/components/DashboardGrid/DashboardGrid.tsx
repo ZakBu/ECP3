@@ -104,7 +104,9 @@ export default function DashboardGrid({
   return (
     <Box
       sx={{
-        width: "100%",
+        width: `${width}px`,
+        maxWidth: "100%",
+        flex: "0 0 auto",
         minHeight: outerMinHeight,
         height: "auto",
         borderRadius: `${figmaTokens.radius.xs}px`,

@@ -664,7 +664,10 @@ export default function HomePage() {
                 position: "relative",
                 flex: 1,
                 minHeight: 0,
-                overflow: "hidden",
+                overflowX: "hidden",
+                overflowY: "auto",
+                overscrollBehavior: "contain",
+                scrollbarGutter: "stable",
               }}
             >
               {loadError ? (
@@ -709,7 +712,7 @@ export default function HomePage() {
                   )}
                 </Paper>
               ) : !isEditing ? (
-                <Box sx={{ width: "100%", overflow: "hidden", borderRadius: 2 }}>
+                <Box sx={{ width: "100%", overflow: "visible", borderRadius: 2 }}>
                   <Box
                     sx={{
                       width: "100%",
@@ -740,12 +743,12 @@ export default function HomePage() {
                   </Box>
                 </Box>
               ) : (
-                <Stack spacing={1.25} sx={{ minHeight: 0, flex: 1, overflow: "hidden" }}>
+                <Stack spacing={1.25} sx={{ minHeight: 0, flex: 1, overflow: "visible" }}>
                   <Box
                     sx={{
                       width: "100%",
                       maxWidth: "100%",
-                      overflow: "hidden",
+                      overflow: "visible",
                       borderRadius: 2,
                       position: "relative",
                       flex: 1,

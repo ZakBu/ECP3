@@ -68,6 +68,7 @@ const sizePretty = {
 };
 const sizeNewLabel = { square:'NEW', wide:'NEW', wideTall:'NEW', wide4x2:'NEW', xwide:'NEW', xl:'NEW' };
 const baseSizes = ['compact','tall','standard','square','wide'];
+const lowHeightSizes = new Set(['compact', 'standard', 'wide', 'xwide']);
 
 const TLink = ({ children }) => (
   <button style={{background:'none',border:'none',padding:0,fontSize:12,fontWeight:500,color:C.p,cursor:'pointer',display:'inline-flex',alignItems:'center',gap:3,fontFamily:"'Roboto',sans-serif"}}>
@@ -101,7 +102,7 @@ const MetaRow = ({ scope='Отдел', subject='ОГА', period='7 дней', me
   );
 };
 const Tabs = ({ tabs, active, onChange, sm }) => (
-  <div style={{display:'flex',gap:4,flexWrap:'wrap',marginBottom:12}}>
+  <div style={{display:'flex',gap:4,flexWrap:'wrap',marginBottom:sm?6:12}}>
     {tabs.map((t) => (
       <button key={t.key} className="itab" onClick={() => onChange(t.key)} style={{background:active===t.key?C.p:C.sf3,color:active===t.key?'#fff':C.t2,fontSize:sm?10:11}}>
         {t.label}
@@ -283,29 +284,23 @@ function W01({ size='standard' }) {
   const cmp = size === 'compact';
   const tall = size === 'tall';
   const square = size === 'square';
+  const low = lowHeightSizes.has(size);
 
-  if (cmp) {
+  if (low) {
     return (
       <W size={size} title="KPI" iconBg={C.pC} icon={<IconBar />} noFoot acc="p">
-        <div style={{display:'flex',flexDirection:'column',height:'100%',overflow:'hidden',minHeight:0}}>
-          <div style={{marginBottom:6,flexShrink:0}}><Tabs tabs={scopeTabs} active={scope} onChange={setScope} sm /></div>
-          <div style={{fontSize:'clamp(7px, 2.2cqw, 9px)',fontWeight:600,textTransform:'uppercase',color:C.t3,marginBottom:4,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis',flexShrink:0}}>{scopeMeta[scope].scope} · Сегодня</div>
-          <div style={{textAlign:'center',padding:'0 0 4px',flex:'1 1 auto',minHeight:0,display:'flex',flexDirection:'column',justifyContent:'center'}}>
-            <div style={{fontSize:'clamp(20px, 11cqw, 46px)',fontWeight:300,color:C.pM,lineHeight:1}}>{kpiData[0].v}</div>
-            <div style={{fontSize:'clamp(8px, 2.6cqw, 10px)',color:C.t2,marginTop:2}}>Новые задачи</div>
-            <div style={{fontSize:'clamp(7px, 2.2cqw, 9px)',color:C.gM,fontWeight:600,marginTop:1}}>↑ +2 сегодня</div>
-          </div>
-          <div style={{marginTop:'auto',flexShrink:0,minHeight:0}}>
-            <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:4,marginBottom:6}}>
-              {kpiData.slice(1).map((k, i) => (
-                <div key={i} style={{textAlign:'center',padding:'4px 2px',borderRadius:10,background:`${C[k.c+'C']}66`,border:`1px solid ${C[k.c+'C']}99`,minWidth:0}}>
-                  <div style={{fontSize:'clamp(12px, 5cqw, 18px)',fontWeight:300,color:C[k.c+'M'],lineHeight:1}}>{k.v}</div>
-                  <div style={{fontSize:'clamp(6px, 1.8cqw, 7px)',color:C[k.c+'COn'],fontWeight:700,marginTop:2,textTransform:'uppercase',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{k.l.split(' ')[0]}</div>
-                </div>
-              ))}
+        <div style={{display:'grid',gridTemplateColumns:'1.2fr repeat(3,1fr)',gap:6,height:'100%',overflow:'hidden',minHeight:0}}>
+            <div style={{borderRadius:12,background:C.sf2,border:`1px solid ${C.ol}33`,padding:'5px 7px',minWidth:0,minHeight:0,display:'flex',flexDirection:'column',justifyContent:'center'}}>
+              <div style={{fontSize:8,fontWeight:700,textTransform:'uppercase',color:C.t3,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{scopeMeta[scope].scope}</div>
+              <div style={{fontSize:22,fontWeight:300,color:C.pM,lineHeight:1,marginTop:1}}>{kpiData[0].v}</div>
+              <div style={{fontSize:9,color:C.gM,fontWeight:700,marginTop:1}}>↑ +2</div>
             </div>
-            <Prog pct={20} c="p" h={3} />
-          </div>
+            {kpiData.slice(1).map((k, i) => (
+              <div key={i} style={{textAlign:'center',borderRadius:12,background:`${C[k.c+'C']}66`,border:`1px solid ${C[k.c+'C']}99`,padding:'5px 3px',minWidth:0,minHeight:0,display:'flex',flexDirection:'column',justifyContent:'center'}}>
+                <div style={{fontSize:17,fontWeight:300,color:C[k.c+'M'],lineHeight:1}}>{k.v}</div>
+                <div style={{fontSize:7,color:C[k.c+'COn'],fontWeight:700,marginTop:2,textTransform:'uppercase',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{k.l.split(' ')[0]}</div>
+              </div>
+            ))}
         </div>
       </W>
     );
@@ -593,11 +588,11 @@ function KanbanView({ cols4=false }) {
     : [{t:'Новые',c:C.p,cnt:3,cards:[{t:'Заключение по объекту №338',d:'05.04',sc:'p'}]},{t:'В работе',c:C.gM,cnt:4,cards:[{t:'Проверка ПМТ Садовая',d:'02.04',sc:'g'}]},{t:'Просрочено',c:C.rM,cnt:3,cards:[{t:'ГПЗУ ул. Ленина 45',d:'28.03',sc:'r'}]}];
   return <div style={{display:'grid',gridTemplateColumns:`repeat(${cols.length},1fr)`,gap:8}}>{cols.map((col, i) => <div key={i} className="kcol"><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}><span style={{fontSize:9,fontWeight:700,textTransform:'uppercase',color:col.c}}>{col.t}</span><span style={{background:C.sf,borderRadius:999,padding:'1px 7px',fontSize:9,fontWeight:600,color:C.t3,border:`1px solid ${C.ol}44`}}>{col.cnt}</span></div>{col.cards.map((k, ki) => <div key={ki} className="kcard"><div style={{width:'100%',height:2,borderRadius:2,background:C[k.sc+'M'] || C.p,marginBottom:7}} /><div style={{fontSize:10,fontWeight:500,color:C.t1,lineHeight:1.4,marginBottom:4}}>{k.t}</div><div style={{fontSize:9,color:C.t3}}>{k.d}</div></div>)}</div>)}</div>;
 }
-function GanttView({ n=5 }) {
+function GanttView({ n=5, dense=false }) {
   const bars = [{id:'CDP-128',start:0,len:2,c:C.rM},{id:'CDP-127',start:0,len:3,c:C.aM},{id:'CDP-126',start:1,len:5,c:C.aM},{id:'CDP-124',start:3,len:8,c:C.p},{id:'CDP-125',start:3,len:2,c:C.gM}];
   const cols = 12;
   const days = ['28','29','30','1','2','3','4','5','6','7','8','9'];
-  return <table style={{width:'100%',borderCollapse:'collapse',fontSize:9,minWidth:320}}><thead><tr><th style={{width:80,textAlign:'left',padding:'2px 8px 6px 0',borderBottom:`1.5px solid ${C.ol}50`,fontSize:9.5,fontWeight:700,color:C.t3}}>ЗАДАЧА</th>{days.slice(0, cols).map((d, i) => <th key={i} style={{textAlign:'center',padding:'2px 0 6px',borderBottom:`1.5px solid ${C.ol}50`,fontSize:9,fontWeight:600,color:C.t3,minWidth:32}}>{d}</th>)}</tr></thead><tbody>{bars.slice(0, n).map((b, bi) => <tr key={bi} className="lrow"><td style={{padding:'4px 8px 4px 0'}}><div style={{fontSize:9,fontWeight:600,color:C.p,background:C.pC,padding:'2px 6px',borderRadius:5,display:'inline-block'}}>{b.id}</div></td>{Array.from({ length: cols }, (_, di) => { if (di === b.start) { return <td key={di} colSpan={Math.min(b.len, cols-di)} style={{padding:'3px 2px'}}><div style={{height:20,borderRadius:7,background:`linear-gradient(90deg,${b.c},${b.c}bb)`,display:'flex',alignItems:'center',paddingLeft:7,fontSize:8,fontWeight:700,color:'#fff'}}>{b.id}</div></td>; } if (di > b.start && di < b.start + b.len) { return null; } return <td key={di} />; })}</tr>)}</tbody></table>;
+  return <table style={{width:'100%',borderCollapse:'collapse',fontSize:9,minWidth:300}}><thead><tr><th style={{width:dense?68:80,textAlign:'left',padding:dense?'0 6px 4px 0':'2px 8px 6px 0',borderBottom:`1.5px solid ${C.ol}50`,fontSize:dense?8.5:9.5,fontWeight:700,color:C.t3}}>ЗАДАЧА</th>{days.slice(0, cols).map((d, i) => <th key={i} style={{textAlign:'center',padding:dense?'0 0 4px':'2px 0 6px',borderBottom:`1.5px solid ${C.ol}50`,fontSize:dense?8:9,fontWeight:600,color:C.t3,minWidth:dense?24:32}}>{d}</th>)}</tr></thead><tbody>{bars.slice(0, n).map((b, bi) => <tr key={bi} className="lrow"><td style={{padding:dense?'2px 6px 2px 0':'4px 8px 4px 0'}}><div style={{fontSize:dense?8:9,fontWeight:600,color:C.p,background:C.pC,padding:dense?'1px 5px':'2px 6px',borderRadius:5,display:'inline-block'}}>{b.id}</div></td>{Array.from({ length: cols }, (_, di) => { if (di === b.start) { return <td key={di} colSpan={Math.min(b.len, cols-di)} style={{padding:dense?'2px 1px':'3px 2px'}}><div style={{height:dense?16:20,borderRadius:7,background:`linear-gradient(90deg,${b.c},${b.c}bb)`,display:'flex',alignItems:'center',paddingLeft:7,fontSize:8,fontWeight:700,color:'#fff'}}>{b.id}</div></td>; } if (di > b.start && di < b.start + b.len) { return null; } return <td key={di} />; })}</tr>)}</tbody></table>;
 }
 const taskViewTabs = [
   { key: "list", label: "Список" },
@@ -609,6 +604,7 @@ function W06({ size = "standard", state = "list", onStateChange }) {
   const wide4x2 = size === "wide4x2";
   const xl = size === "xl";
   const cmp = size === "compact";
+  const low = lowHeightSizes.has(size);
   const subs = { list: "Список задач", kanban: "Доска канбан", gantt: "Диаграмма Гантт" };
   const resolvedState = taskViewTabs.some((t) => t.key === state) ? state : "list";
   return (
@@ -621,13 +617,14 @@ function W06({ size = "standard", state = "list", onStateChange }) {
       badge="3 срочных"
       badgeC="r"
       acc="g"
+      noFoot={low}
     >
       {typeof onStateChange === "function" ? (
-        <Tabs tabs={taskViewTabs} active={resolvedState} onChange={onStateChange} sm={cmp} />
+        <Tabs tabs={taskViewTabs} active={resolvedState} onChange={onStateChange} sm={cmp || low} />
       ) : null}
-      {resolvedState === "list" ? <ListView n={xl || wide4x2 ? 6 : wide ? 5 : 4} /> : null}
-      {resolvedState === "kanban" ? <KanbanView cols4={wide || wide4x2 || xl} /> : null}
-      {resolvedState === "gantt" ? <GanttView n={xl || wide4x2 ? 5 : wide ? 4 : 3} /> : null}
+      {resolvedState === "list" ? <ListView n={low ? 1 : xl || wide4x2 ? 6 : wide ? 5 : 4} /> : null}
+      {resolvedState === "kanban" ? <KanbanView cols4={!low && (wide || wide4x2 || xl)} /> : null}
+      {resolvedState === "gantt" ? <GanttView n={low ? 1 : xl || wide4x2 ? 5 : wide ? 4 : 3} dense={low} /> : null}
     </W>
   );
 }
@@ -679,7 +676,9 @@ function W08({ size='standard', state='tasks' }) {
   const tall = size==='tall';
   const square = size==='square';
   const wide = size==='wide';
-  const items = cmp ? data.slice(0,1) : tall ? data.slice(0,3) : data;
+  const wide4x2 = size==='wide4x2';
+  const low = lowHeightSizes.has(size);
+  const items = low ? data.slice(0,1) : tall ? data.slice(0,3) : (square || wide4x2) ? data.slice(0,2) : data;
 
   if (tall) {
     return <W size={size} title={state==='tasks'?'Избранное':'Возможности'} sub={state==='tasks'?`${data.length} задачи`:`${data.length} возможности`} iconBg={C.aC} icon={<IconHeart />} acc="a" noFoot>
@@ -690,8 +689,8 @@ function W08({ size='standard', state='tasks' }) {
     </W>;
   }
 
-  const cols = cmp ? 1 : square ? 2 : wide ? 3 : 2;
-  return <W size={size} title="Избранное" sub={state==='tasks'?`${data.length} задачи`:`${data.length} возможности`} iconBg={C.aC} icon={<IconHeart />} acc="a"><div style={{display:'grid',gridTemplateColumns:`repeat(${cols},1fr)`,gap:10}}>{items.map((it, i) => <FCard key={i} it={it} />)}{!cmp ? <div className="addbtn" style={{minHeight:88}}><div style={{width:34,height:34,borderRadius:'50%',background:C.pC,display:'flex',alignItems:'center',justifyContent:'center'}}><IconPlus c={C.p} /></div><span style={{fontSize:12,fontWeight:500,color:C.p}}>Добавить</span></div> : null}</div></W>;
+  const cols = low ? 1 : square ? 2 : wide ? 3 : 2;
+  return <W size={size} title="Избранное" sub={state==='tasks'?`${data.length} задачи`:`${data.length} возможности`} iconBg={C.aC} icon={<IconHeart />} acc="a" noFoot={low || square || wide4x2}><div style={{display:'grid',gridTemplateColumns:`repeat(${cols},1fr)`,gap:10}}>{items.map((it, i) => <FCard key={i} it={it} />)}{!low && !square && !wide4x2 ? <div className="addbtn" style={{minHeight:88}}><div style={{width:34,height:34,borderRadius:'50%',background:C.pC,display:'flex',alignItems:'center',justifyContent:'center'}}><IconPlus c={C.p} /></div><span style={{fontSize:12,fontWeight:500,color:C.p}}>Добавить</span></div> : null}</div></W>;
 }
 
 const docsData = {
@@ -736,8 +735,9 @@ function W10({ size='standard', state='active' }) {
 
 const actData = [{av:'КН',action:'закрыла задачу',ref:'ЗД-1038',t:'9:41',c:C.gM,tag:'g'},{av:'СА',action:'создал документ',ref:'ДОК-3451',t:'9:22',c:C.p,tag:'p'},{av:'ПД',action:'добавил комментарий',ref:'ЗД-1031',t:'8:55',c:C.aM,tag:'a'},{av:'ЛМ',action:'просрочил задачу',ref:'ЗД-1024',t:'вчера',c:C.rM,tag:'r'},{av:'НЕ',action:'создал заявление',ref:'ЗЯВ-923',t:'вчера',c:C.tlM,tag:'tl'}];
 function W11({ size='standard' }) {
-  const rows = size==='compact' ? actData.slice(0,3) : actData;
-  return <W size={size} title={size==='compact'?'Команда':'Активность команды'} sub="Последние действия" iconBg={C.puC} icon={<IconUsers />} acc="pu" noFoot={size==='compact'}>{rows.map((it, i) => <div key={i} style={{display:'flex',alignItems:'center',gap:10,padding:'8px 0',borderBottom:i<rows.length-1?`1px solid ${C.ol}30`:'none'}}><div style={{position:'relative',flexShrink:0}}><Av t={it.av} bg={it.c} s={32} /><div style={{position:'absolute',bottom:-1,right:-1,width:10,height:10,borderRadius:'50%',background:it.c,border:'2px solid #fff'}} /></div><div style={{flex:1,minWidth:0}}><div style={{fontSize:12,color:C.t2,overflow:'hidden',whiteSpace:'nowrap',textOverflow:'ellipsis'}}><span style={{fontWeight:600,color:C.t1}}>{it.av} </span>{it.action}</div><div style={{fontSize:11,color:C.p,fontWeight:500,marginTop:2}}>{it.ref}</div></div><div style={{fontSize:10,color:C.t3,flexShrink:0,textAlign:'right'}}><div>{it.t}</div><div style={{marginTop:3}}><Chip c={it.tag} sm>{it.c===C.gM?'закрыто':it.c===C.rM?'просроч':it.c===C.p?'создано':'коммент'}</Chip></div></div></div>)}</W>;
+  const low = lowHeightSizes.has(size);
+  const rows = low ? actData.slice(0,1) : actData;
+  return <W size={size} title={low?'Команда':'Активность команды'} sub="Последние действия" iconBg={C.puC} icon={<IconUsers />} acc="pu" noFoot={low}>{rows.map((it, i) => <div key={i} style={{display:'flex',alignItems:'center',gap:10,padding:low?'5px 0':'8px 0',borderBottom:i<rows.length-1?`1px solid ${C.ol}30`:'none'}}><div style={{position:'relative',flexShrink:0}}><Av t={it.av} bg={it.c} s={low?28:32} /><div style={{position:'absolute',bottom:-1,right:-1,width:10,height:10,borderRadius:'50%',background:it.c,border:'2px solid #fff'}} /></div><div style={{flex:1,minWidth:0}}><div style={{fontSize:12,color:C.t2,overflow:'hidden',whiteSpace:'nowrap',textOverflow:'ellipsis'}}><span style={{fontWeight:600,color:C.t1}}>{it.av} </span>{it.action}</div><div style={{fontSize:11,color:C.p,fontWeight:500,marginTop:2}}>{it.ref}</div></div><div style={{fontSize:10,color:C.t3,flexShrink:0,textAlign:'right'}}><div>{it.t}</div>{!low ? <div style={{marginTop:3}}><Chip c={it.tag} sm>{it.c===C.gM?'закрыто':it.c===C.rM?'просроч':it.c===C.p?'создано':'коммент'}</Chip></div> : null}</div></div>)}</W>;
 }
 
 const calEvts = [{time:'10:00',title:'Совещание по ГП',place:'Зал 3',c:C.p},{time:'12:30',title:'Согласование ГПЗУ №214',place:'Онлайн',c:C.gM},{time:'15:00',title:'Приёмная комиссия',place:'Каб. 211',c:C.aM}];
@@ -752,8 +752,9 @@ function W12({ size='standard' }) {
 const newsData = [{tag:'Регламент',text:'Обновлён регламент согласования ГПЗУ — сокращены сроки до 15 дней',date:'09.04',c:'p'},{tag:'Система',text:'Новая версия ИАС ОГД доступна для тестирования',date:'08.04',c:'tl'},{tag:'Событие',text:'Итоги совещания ДГА от 07.04.2026',date:'07.04',c:'g'},{tag:'Нормы',text:'Изменения в нормах строительства 2026',date:'05.04',c:'a'}];
 function W13({ size='standard' }) {
   const cmp = size==='compact';
-  const rows = cmp ? newsData.slice(0,2) : newsData;
-  return <W size={size} title="Новости" sub="Официальные новости ДГА" iconBg={C.aC} icon={<IconNews />} acc="a">{rows.map((n, i) => <div key={i} style={{display:'flex',gap:10,alignItems:'flex-start',padding:cmp?'8px 0':'10px 0',borderBottom:i<rows.length-1?`1px solid ${C.ol}30`:'none'}}><div style={{width:3,alignSelf:'stretch',borderRadius:3,background:C[n.c+'M'] || C.aM,flexShrink:0,minHeight:32}} /><div style={{flex:1,minWidth:0}}><div style={{display:'flex',alignItems:'center',gap:6,marginBottom:4}}><Chip c={n.c} sm>{n.tag}</Chip><span style={{fontSize:10,color:C.t3,marginLeft:'auto'}}>{n.date}</span></div><div style={{fontSize:cmp?11:12,fontWeight:500,color:C.t1,lineHeight:1.45}}>{n.text}</div></div></div>)}</W>;
+  const low = lowHeightSizes.has(size);
+  const rows = low ? newsData.slice(0,2) : newsData.slice(0,3);
+  return <W size={size} title="Новости" sub="Официальные новости ДГА" iconBg={C.aC} icon={<IconNews />} acc="a" noFoot={low}>{rows.map((n, i) => <div key={i} style={{display:'flex',gap:10,alignItems:'flex-start',padding:low?'6px 0':cmp?'8px 0':'6px 0',borderBottom:i<rows.length-1?`1px solid ${C.ol}30`:'none'}}><div style={{width:3,alignSelf:'stretch',borderRadius:3,background:C[n.c+'M'] || C.aM,flexShrink:0,minHeight:low?24:26}} /><div style={{flex:1,minWidth:0}}><div style={{display:'flex',alignItems:'center',gap:6,marginBottom:3}}><Chip c={n.c} sm>{n.tag}</Chip><span style={{fontSize:10,color:C.t3,marginLeft:'auto'}}>{n.date}</span></div><div style={{fontSize:cmp?11:12,fontWeight:500,color:C.t1,lineHeight:1.28,display:'-webkit-box',WebkitLineClamp:low?1:2,WebkitBoxOrient:'vertical',overflow:'hidden'}}>{n.text}</div></div></div>)}</W>;
 }
 
 const regData = [{l:'Градостроительный кодекс РФ',n:12,c:'p'},{l:'Постановления Правительства Москвы',n:28,c:'g'},{l:'Приказы ДГА',n:7,c:'a'},{l:'Технические регламенты',n:15,c:'tl'}];
